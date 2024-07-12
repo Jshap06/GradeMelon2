@@ -321,4 +321,4 @@ function convertData1ToData2(data1) {
 
 
 
-module.exports=Client;
+module.exports.default=Client;
