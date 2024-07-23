@@ -12,17 +12,17 @@ const flatted = require('flatted');
 async function getDocument(details){
     console.log(details)
     return new Promise(async(res,rej)=>{
-        if (session == null || typeof(session) == 'undefined') {
-            await refresh(details);}
-        await session.get(details.domain+"/"+details.url,{ responseType: 'arraybuffer' })
+        await axios.get(details.domain+"/"+details.url,{headers:{Cookie:details.cookies},responseType: 'arraybuffer' })
             .then(file=>{
                 console.log("YIPEE")
                 console.log("Content-Type:", file.headers['content-type']);
+                if(file.data.includes("403")){rej(new Error("Link/Authentication Expired"))};
                 res(file.data);
 
             })
             .catch(error=>{
                 console.log("oh no")
+                if(error.message.includes("403")){rej(new Error("Link/Authentication Expired"))}
                 console.error(error)
                 rej(error);
             })
@@ -32,24 +32,27 @@ async function getDocument(details){
 async function getDocuments(details){
     return new Promise(async(res,rej)=>{
         try{
-        if (session == null || typeof(session) == 'undefined') {
-            await refresh(details);}
         const url = details.domain+"/PXP2_Documents.aspx?AGU=0";
-        await session.get(url)
+        await axios.get(url,{headers:{Cookie:details.cookies}})
             .then(response=>{
+                if(response.data.includes("ParentVUE and StudentVUE Access")){rej(new Error("Authentication Cookies Expired"))};
                 res(response.data);
                             })
-            .catch(err=>rej(err))
+            .catch(err=>{
+            console.log(err)
+            rej(err)})
 
 
     }
-    catch(error){rej(error)}
+    catch(error){
+    console.log("okay now I'm confused")
+    rej(error)}
     })
 
 }
 
 
-async function logIn(details) {
+async function logIn(details,session) {
     return new Promise(async (res, rej)=>{
     const url = details.domain+"/PXP2_Login_Student.aspx?regenerateSessionId=True";
     const data = new FormData();
@@ -71,22 +74,27 @@ async function logIn(details) {
         if (login.data.includes("Good")){
             console.log("Logged in");
             res();
-        } else {rej(new Error("Incorrect Username or Password"))};})
+        } else {
+        rej(new Error("Incorrect Username or Password"))
+        console.log(login.data)
+        };})
 
 })}
 
 async function refresh(details){
     return new Promise(async (res, rej)=>{
-  cookieJar = new tough.CookieJar();
-     session = await wrapper(axios.create({
+   const cookieJar = new tough.CookieJar();
+    const session = await wrapper(axios.create({
           withCredentials: true,
           jar: cookieJar
       }));
-      await logIn(details)
+      await logIn(details,session)
         .then(res1=>{
             cookieJar.getCookies(details.domain, (err, cookies) => {
                   cookies="PVUE=ENG; "+cookies[0].key+"="+cookies[0].value + "; " + cookies[2].key + "="+cookies[2].value+";";
-                res();
+                  console.log("fuck me sideways")
+                  console.log(cookies)
+                res(cookies);
               });
         })
         .catch(rej1=>{rej(rej1)})
@@ -124,14 +132,14 @@ async function getAssignments(details){
         res([response3.data, response2.data]);
 
     })};
-var session;
-var cookieJar;
+
+
+
 export default async function handler(req, res) {
     if (req.method === 'POST') {
         if(req.body.func=="refresh"){
-
         await refresh(req.body)
-    .then(res1=>{res.json({status:true});}).catch(error=>{
+    .then(res1=>{res.json({status:true,cookies:res1});}).catch(error=>{
     res.status(200).json({status:false,message:error.message})})}
     if(req.body.func=="login"){
         await logIn(req.body)
