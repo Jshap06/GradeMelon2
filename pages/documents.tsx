@@ -4,8 +4,9 @@ import Head from "next/head";
 import { Spinner } from "flowbite-react";
 
 
-function createBlobAndOpen(arrayBuffer1) {
-    const arrayBuffer = new Uint8Array(arrayBuffer1.data);
+function createBlobAndOpen(arrayBuffer1:{arrayBuffer1:any}) {
+	console.log(arrayBuffer1);
+    const arrayBuffer = new Uint8Array(arrayBuffer1.data); //genuinely have no clue how ANY of this works, chatGPT wrote this function. where tf does the.data property come frm. No CLUE. but it
     // Log the array buffer length for debugging purposes
     console.log('Creating blob with array buffer length:', arrayBuffer.byteLength);
 
@@ -57,31 +58,41 @@ function createBlobAndOpen(arrayBuffer1) {
 
 
 
-const parseName = (name: string): string => {
-	return new DOMParser().parseFromString(name, "text/html").documentElement
-		.textContent;
-};
-
 interface DocumentsProps {
 	client: any;
+	setToasts:any;
+	setreRender:any;
+	reRender:boolean;
+	login:any;
+	createError: (message:string)=>any;
 }
 
-export default function Documents({ client }: DocumentsProps) {
+export default function Documents({ client, setToasts,setreRender,reRender,login,createError }: DocumentsProps) {
 	const router = useRouter();
 	const [documents, setDocuments] = useState([]);
 	const [loading, setLoading] = useState(true);
+
 	useEffect(() => {
-		try {
-			client.getDocuments().then(res=>{
+		
+		console.log("preplexing, no?")
+        async function getDocs(){
+            await client.getDocuments().then(res=>{
+				console.log("why")
                 setDocuments(res);
 			setLoading(false)})
+            }
+		try {
+		if(client.documents.length!=0){setDocuments(client.documents)}else{
+			getDocs();}
 		} catch(error) {
-		    console.log(error);
+
+
+	
 			if (localStorage.getItem("remember") === "false") {
 				router.push("/login");
 			}
 		}
-	}, [client]);
+	}, [reRender,client]);
     console.log("does this look empty to you?");
     console.log(documents);
 	return (
@@ -130,11 +141,19 @@ export default function Documents({ client }: DocumentsProps) {
 											<a
 												onClick={async () => {
 												    if(typeof(document.base64)=="undefined"){
-													let download = await client.getDocument(document.index);
-													document.base64=download;
-													console.log(download);
-													}
-													createBlobAndOpen(document.base64);
+													await client.getDocument(document.index).then(download=>{
+														console.log(download);
+														if(download.trouble){setreRender(!reRender)}
+														document.base64=download.download;
+														console.log(download);
+														createBlobAndOpen(document.base64);
+
+													}).catch(error=>{
+														console.log("hubba dubba wubba flubba"+error.message);
+														createError(error.message);
+													})
+													}else{
+													createBlobAndOpen(document.base64)}
 												}}
 												href="#"
 											>
