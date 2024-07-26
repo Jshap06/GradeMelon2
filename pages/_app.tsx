@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../styles/globals.css";
 import Client from "../utils/client";
 import { useRouter } from "next/router";
-import { Flowbite, Toast, useTheme } from "flowbite-react";
+import { Flowbite, Toast } from "flowbite-react";
 import Topbar from "../components/TopBar";
 import SideBar from "../components/SideBar";
 import MobileBar from "../components/MobileBar";
@@ -12,10 +12,7 @@ import Script from "next/script";
 import { HiX } from "react-icons/hi";
 import BackgroundColor from "../components/BackgroundColor";
 import { AnimateSharedLayout } from "framer-motion";
-import App, {Container} from 'next/app'
-import '../styles/globals.css';
-
-//BUG LIST: the fucking stupid ass solution I have for the thing on mobile where sometimes u need to double click the documents tab | the equivalent issue on DESKTOP. | SOMETIMES WHEN THE REQUEst FOR THE LOGIN HANGS IT DOESNT EVER DO A TIMEOUT SO UR STUCK NEED TO MAKE IT DO A TIMEOUT | on ANDRIOD IT DOES NOT OPEN PDF IN NEW TAB IT DOWNLOADS, FIX | ADD IN SOME COOKIE UTILZIATION SO YOU DONT NEED TO LOGIN EVERY SINGLE TIME
+import useWindowSize from '../hooks/useWindowSize';
 
 interface Toast {
 	title: string;
@@ -24,134 +21,105 @@ interface Toast {
 
 const noShowNav = ["/login", "/", "/privacy", "/letter"];
 
-
-
 function MyApp({ Component, pageProps }) {
-    console.log(Component);
-    console.log("now props");
-    console.log(pageProps);
 	const router = useRouter();
-	const [districtURL, setDistrictURL] = useState(
-		"https://md-mcps-psv.edupoint.com"
-	);
+	const [districtURL, setDistrictURL] = useState("https://md-mcps-psv.edupoint.com");
 	const [client, setClient] = useState(undefined);
 	const [studentInfo, setStudentInfo] = useState(undefined);
 	const [toasts, setToasts] = useState<Toast[]>([]);
 	const [grades, setGrades] = useState<Grades>();
 	const [period, setPeriod] = useState<number>();
 	const [loading, setLoading] = useState(false);
-    console.log(districtURL);
-	const login = async (
-		username: string,
-		password: string,
-		save: boolean,
-		url?: string
-	) => {
-		await setLoading(true);
-		const student = new Client({username:username,password:password});
-		console.log(student);
-		await student.refresh()
-		    .then(async ()=>{
-				console.log(student);
-				await setClient(student);
-				if (save) {
-					localStorage.setItem("remember", "true");
-					localStorage.setItem("username", username);
-					localStorage.setItem("password", password);
-					localStorage.setItem("districtURL", districtURL);
-				} else {
-					localStorage.setItem("remember", "false");
-					localStorage.removeItem("username");
-					localStorage.removeItem("password");
-				}
-				await setLoading(false);
-				return true;})
-		.catch((err)=>{
-				console.log(err);
-				setToasts((toasts) => [
-					...toasts,
-					{
-						title: "Login Error: Incorrect Username or Password",
-						type: "error",
-					},
-				]);
-				setTimeout(() => {
-					setToasts((toasts) => toasts.slice(1));
-				}, 5000);
-				setLoading(false);
-			    return false;
-			});
+	const [reRender,setreRender]=useState(false);
+	const { width } = useWindowSize();
+	const isMediumOrLarger = width >= 768;
 
+	const login = async (username: string, password: string, save: boolean) => {
+		setLoading(true);
+		const student = new Client({ username, password });
+		try {
+			await student.refresh();
+			setClient(student);
+			if (save) {
+				localStorage.setItem("remember", "true");
+				localStorage.setItem("username", username);
+				localStorage.setItem("password", password);
+				localStorage.setItem("districtURL", districtURL);
+			} else {
+				localStorage.setItem("remember", "false");
+				localStorage.removeItem("username");
+				localStorage.removeItem("password");
+			}
+			setLoading(false);
+			return true;
+		} catch (err) {
+			console.error(err);
+			setToasts((toasts) => [...toasts, { title: err.message, type: "error" }]);
+			setTimeout(() => {
+				setToasts((toasts) => toasts.slice(1));
+			}, 5000);
+			setLoading(false);
+			return false;
+		}
 	};
 
 	const logout = async () => {
-		await setClient(undefined);
-		await router.push("/login");
-		await setStudentInfo(undefined);
-		await setGrades(undefined);
-		await localStorage.removeItem("username");
-		await localStorage.removeItem("password");
+		setClient(undefined);
+		router.push("/login");
+		setStudentInfo(undefined);
+		setGrades(undefined);
+		if(localStorage.getItem("remember")=="false"){localStorage.removeItem("username")}
+		localStorage.removeItem("password");
 	};
 
-    const getDocuments = async () =>{
-        if (client!== undefined){
-            await client.getDocuments()
-                .then(docs=>{return(docs)})
-                .catch(()=>{return("undefined")})
-        }
-    };
+	function createError(message){
+		setToasts((toasts) => [...toasts, { title: message, type: "error" }]);
+			setTimeout(() => {
+				setToasts((toasts) => toasts.slice(1));
+			}, 5000);
+	}
 
-    	useEffect(() => {
+	useEffect(()=>{
+		console.log("major tom")
+		async function asyncdoer(){await client.getStudentInfo().then(info=>{setStudentInfo(info)}).catch(error=>{createError(error.message)})}
+		if(studentInfo===undefined&&client!=undefined){
+			console.log("tsting testing")
+			asyncdoer()
+			console.log("well damn");
+			console.log(studentInfo)
+		}
+
+	},[client])
+
+
+
+	useEffect(() => {
+		async function doLogin(){
+			await login(localStorage.getItem("username"),localStorage.getItem("password"),true)}
+		if(client===undefined&&localStorage.getItem("username")!=null&&localStorage.getItem("password")!=null){
+			doLogin();
+			
+		}
+
 		if (router.pathname === "/") {
-				router.push("/login");
-			}
- 	}, []);
-
-
-
-	// useEffect(() => {
-	// 	let username = localStorage.getItem("username");
-	// 	let password = localStorage.getItem("password");
-	// 	let remember = localStorage.getItem("remember");
-	// 	let storedDistrictURL = localStorage.getItem("districtURL");
-	// 	storedDistrictURL && setDistrictURL(storedDistrictURL);
-	// 	if (remember === "true" && username && password && storedDistrictURL) {
-	// 		login(username, password, true, districtURL);
-	// 	}
-	// }, []);
-
-    // this shit could keep the cleint refreshed I guess, not practical in my implementation
-	// useEffect(() => {
-	// 	if (client !== undefined) {
-	// 		try {
-	// 			client.studentInfo().then((res) => {
-	// 				console.log(res);
-	// 				setStudentInfo(res);
-	// 			});
-	// 		} catch {
-	// 			console.log("waiting");
-	// 		}
-	// 		if (router.pathname === "/login") {
-	// 			router.push("/grades");
-	// 		}
-	// 	}
-	// }, [client]);
+			router.push("/login");
+		}
+	}, []);
 
 	return (
-
 		<Flowbite>
 			<Head>
 				<title>Grade Melon</title>
-				<script
+				<Script
 					defer
 					data-domain="grademelon.com"
 					src="https://stats.tinu.tech/js/plausible.js"
-				></script>
-				<script
+				></Script>
+				<Script
 					defer
 					src="https://static.cloudflareinsights.com/beacon.min.js"
 					data-cf-beacon='{"token": "c01b4332f8c346bdbf9df1938384019b"}'
-				></script>
+				></Script>
 			</Head>
 			<Script
 				async
@@ -191,7 +159,6 @@ function MyApp({ Component, pageProps }) {
 								districtURL={districtURL}
 								setDistrictURL={setDistrictURL}
 								login={login}
-								getDocuments={getDocuments}
 								client={client}
 								grades={grades}
 								setGrades={setGrades}
@@ -199,14 +166,17 @@ function MyApp({ Component, pageProps }) {
 								loading={loading}
 								period={period}
 								setPeriod={setPeriod}
+								setreRender={setreRender}
+								reRender={reRender}
+								createError={createError}
 							/>
 						</AnimateSharedLayout>
 					)}
 
-					{!noShowNav.includes(router.pathname) && (
+					{!noShowNav.includes(router.pathname) && isMediumOrLarger && (
 						<div className="pb-16 md:pb-0">
-							<div className="hidden md:flex">
-								<SideBar studentInfo={studentInfo} logout={logout} />
+							<div className="flex">
+								<SideBar logout={logout} />
 								<AnimateSharedLayout>
 									<Component
 										{...pageProps}
@@ -214,16 +184,22 @@ function MyApp({ Component, pageProps }) {
 										setDistrictURL={setDistrictURL}
 										client={client}
 										login={login}
-										getDocuments={getDocuments}
 										grades={grades}
 										setGrades={setGrades}
 										setToasts={setToasts}
 										loading={loading}
 										period={period}
 										setPeriod={setPeriod}
+										setreRender={setreRender}
+										reRender={reRender}
+										createError={createError}
 									/>
 								</AnimateSharedLayout>
 							</div>
+						</div>
+					)}
+					{!noShowNav.includes(router.pathname) && !isMediumOrLarger && (
+						<div className="pb-16 md:pb-0">
 							<div className="md:hidden">
 								<AnimateSharedLayout>
 									<Component
@@ -231,7 +207,6 @@ function MyApp({ Component, pageProps }) {
 										districtURL={districtURL}
 										client={client}
 										login={login}
-										getDocuments={getDocuments}
 										setClient={setClient}
 										grades={grades}
 										setGrades={setGrades}
@@ -239,6 +214,9 @@ function MyApp({ Component, pageProps }) {
 										loading={loading}
 										period={period}
 										setPeriod={setPeriod}
+										setreRender={setreRender}
+										reRender={reRender}
+										createError={createError}
 									/>
 								</AnimateSharedLayout>
 								<div className="px-4 fixed bottom-5 w-full">
