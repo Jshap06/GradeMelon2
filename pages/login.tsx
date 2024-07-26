@@ -12,6 +12,7 @@ interface LoginProps {
 	login: (username: string, password: string, save: boolean) => any;
 	setToasts: any;
 	loading: boolean;
+	createError: (message:string)=>any;
 }
 
 export default function Login({
@@ -21,6 +22,7 @@ export default function Login({
 	setDistrictURL,
 	setToasts,
 	loading,
+	createError
 }: LoginProps) {
 	const router = useRouter();
 	const [username, setUsername] = useState("");
@@ -53,26 +55,20 @@ export default function Login({
 		if (localStorage.getItem("remember") === "true") {
 			setCheckbox(true);
 		}
+    if (localStorage.getItem("username")!=null){
+        setUsername(localStorage.getItem("username"))
+        }
 	}, []);
 
-	const findDistricts = async () => {
-		StudentVue.findDistricts(zipCode)
-			.then((res) => {
-				setDisstricts(res);
-			})
-			.catch((err) => {
-				console.log(err);
-				setToasts((toasts) => [
-					...toasts,
-					{
-						title: err.message,
-						type: "error",
-					},
-				]);
-				setTimeout(() => {
-					setToasts((toasts) => toasts.slice(1));
-				}, 5000);
-			});
+	const findDistricts = () => {
+		var found=false;
+		allDistricts.forEach((district)=>{
+			if(district.zipcode.includes(zipCode)){
+				setDistrictURL(district.parentVueUrl);
+				found=true;
+			}
+		})
+		if(!found){createError("District Not Found")}
 	};
 
 	return (
