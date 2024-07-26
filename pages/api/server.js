@@ -9,21 +9,72 @@ const cheerio = require('cheerio');
 const flatted = require('flatted');
 
 
-async function getDocument(details){
+
+async function getStudentPhoto(details){
     console.log(details)
     return new Promise(async(res,rej)=>{
-        await axios.get(details.domain+"/"+details.url,{headers:{Cookie:details.cookies},responseType: 'arraybuffer' })
+        await axios.get(details.domain+"/"+details.url,{headers:{
+            "Referer":details.domain+"/PXP2_Documents.aspx?AGU=0","Cookie":details.cookies},responseType: 'arraybuffer' })
             .then(file=>{
                 console.log("YIPEE")
                 console.log("Content-Type:", file.headers['content-type']);
-                if(file.data.includes("403")){rej(new Error("Link/Authentication Expired"))};
-                res(file.data);
+                res(file.data)
 
             })
             .catch(error=>{
                 console.log("oh no")
                 if(error.message.includes("403")){rej(new Error("Link/Authentication Expired"))}
+                if(error.message.includes("hung up")||error.message.includes("ENOTFOUND")){rej(new Error("Network Error: Try Again Shortly"))}
+                console.error(error.message);
+                rej(error);
+            })
+    })
+}
+
+
+
+
+async function getStudentInfo(details){
+    return new Promise(async(res,rej)=>{
+        details.headers.Cookie=details.cookies;
+        console.log("print debug")
+        console.log(details.headers)
+        await axios.get(details.domain+"/"+"PXP2_Student.aspx?AGU=0",{'headers':details.headers})
+            .then(page=>{
+                console.log("type shit")
+                res(page.data)
+            })
+            .catch(error=>{
+                if(error.message.includes("hung up")||error.message.includes("ENOTFOUND")){rej(new Error("Network Error: Try Again Shortly"))}
                 console.error(error)
+                rej(error)
+            })
+    })
+}
+
+
+
+
+async function getDocument(details){
+    console.log(details)
+    return new Promise(async(res,rej)=>{
+        await axios.get(details.domain+"/"+details.url,{headers:{"Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-User": "?1",
+            "Sec-Fetch-Dest": "document",
+            "Referer":details.domain+"/PXP2_Documents.aspx?AGU=0","Cookie":details.cookies},responseType: 'arraybuffer' })
+            .then(file=>{
+                console.log("YIPEE")
+                console.log("Content-Type:", file.headers['content-type']);
+                if(file.headers['content-type']=="application/pdf"){
+                res(file.data);}else{rej(new Error("Unknown Error"))}
+
+            })
+            .catch(error=>{
+                console.log("oh no")
+                if(error.message.includes("403")){rej(new Error("Link/Authentication Expired"))}
+                if(error.message.includes("hung up")||error.message.includes("ENOTFOUND")){rej(new Error("Network Error: Try Again Shortly"))}
+                console.error(error.message);
                 rej(error);
             })
     })
@@ -33,12 +84,13 @@ async function getDocuments(details){
     return new Promise(async(res,rej)=>{
         try{
         const url = details.domain+"/PXP2_Documents.aspx?AGU=0";
-        await axios.get(url,{headers:{Cookie:details.cookies}})
+        await axios.get(url,{headers:{"Cookie":details.cookies}})
             .then(response=>{
                 if(response.data.includes("ParentVUE and StudentVUE Access")){rej(new Error("Authentication Cookies Expired"))};
                 res(response.data);
                             })
             .catch(err=>{
+                if(err.message.includes("hung up")||err.message.includes("ENOTFOUND")){rej(new Error("Network Error: Try Again Shortly"))}
             console.log(err)
             rej(err)})
 
@@ -61,11 +113,13 @@ async function logIn(details,session) {
     data.append('ctl00$MainContent$username', details.credentials.username);
     data.append('ctl00$MainContent$password', details.credentials.password);
     data.append('ctl00$MainContent$Submit1', 'Login');
-
+    
     const headers = {
         'Origin': details.domain,
-        'Referer': details.domain+'/PXP2_Login_Student.aspx?Logout=1&regenerateSessionId=True'
+        'Referer': details.domain + '/PXP2_Login_Student.aspx?Logout=1&regenerateSessionId=True',
+        ...(details.cookies && { 'Cookie': details.cookies })
     };
+    
 
         await session.post(url, data, { headers })
             .then(login =>{
@@ -76,11 +130,11 @@ async function logIn(details,session) {
             res();
         } else {
         rej(new Error("Incorrect Username or Password"))
-        console.log(login.data)
-        };})
+        };}).catch(err=>{if(err.message.includes("hung up")||err.message.includes("ENOTFOUND")){rej(new Error("Network Error: Try Again Shortly"))}})
 
 })}
 
+//the KEY to maintaing decent workability is when u refresh the auth cookies, try to just reauthenticate the same session rather than spawning new cookies. should prob replace them while true loops in client with like a 3 count, and tell it to regen cookies after 3 consecutive failures
 async function refresh(details){
     return new Promise(async (res, rej)=>{
    const cookieJar = new tough.CookieJar();
@@ -97,7 +151,10 @@ async function refresh(details){
                 res(cookies);
               });
         })
-        .catch(rej1=>{rej(rej1)})
+        .catch(rej1=>{
+            if (rej1.message.includes("key")){res(details.cookies)}else{
+                if(rej1.message.includes("hung up")||rej1.message.includes("ENOTFOUND")){rej(new Error("Network Error: Try Again Shortly"))}else{
+            rej(rej1)}}})
 
 })}
 
@@ -162,7 +219,15 @@ export default async function handler(req, res) {
     if(req.body.func=="getDocs"){
         await getDocuments(req.body)
     .then(res1=>{res.json({status:true,doc:res1});}).catch(error=>{
-    res.status(200).json({status:false,message:error.message})})}
+    res.json({status:false,message:error.message})})}
+    if(req.body.func=="getStudentInfo"){
+        await getStudentInfo(req.body)
+    .then(res1=>{res.json({status:true,info:res1});}).catch(error=>{
+    res.json({status:false,message:error.message})})}
+    if(req.body.func=="getStudentPhoto"){
+        await getStudentPhoto(req.body)
+    .then(res1=>{res.json({status:true,photo:res1});}).catch(error=>{
+    res.json({status:false,message:error.message})})}
 
 
 }else {
