@@ -104,10 +104,10 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 										<div className="top-10 right-4 absolute z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
 											<div className="py-3 px-4">
 												<span className="block text-sm text-gray-900 truncate dark:text-white">
-													{studentInfo?.student.name}
+													{studentInfo?.StudentName}
 												</span>
 												<span className="block text-sm font-medium text-gray-500 truncate dark:text-gray-400">
-													{studentInfo?.currentSchool}
+													{studentInfo?.SchoolName}
 												</span>
 											</div>
 											<ul className="py-1" aria-labelledby="user-menu-button">
