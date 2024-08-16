@@ -14,11 +14,10 @@ import { BsQuestionLg } from "react-icons/bs";
 import Link from "next/link";
 
 interface NavProps {
-	studentInfo: any;
 	logout: () => void;
 }
 
-export default function SideBar({ studentInfo, logout }: NavProps) {
+export default function SideBar({ logout }: NavProps) {
 	const router = useRouter();
 
 	return (

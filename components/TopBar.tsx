@@ -5,12 +5,17 @@ import { FiLogOut } from "react-icons/fi";
 import { BsQuestionLg } from "react-icons/bs";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { MdOutlinePrivacyTip } from "react-icons/md";
+import dynamic from "next/dynamic";
 
 interface TopBarProps {
 	studentInfo: any;
 	client: any;
 	logout: () => void;
 }
+
+const DarkModeToggle = dynamic(() => import('../components/Toggle'), {
+	ssr: false,
+  });
 
 export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 	const [dropdown, setDropdown] = useState(false);
@@ -68,7 +73,7 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 						</Link>
 						<div className="flex items-center md:order-2 gap-2">
 							<div>
-								<DarkThemeToggle />
+								<DarkModeToggle />
 							</div>
 							{studentInfo && (
 								<div
