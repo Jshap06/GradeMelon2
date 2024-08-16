@@ -59,6 +59,7 @@ async function getStudentInfo(details){
 async function getDocument(details){
     console.log(details)
     return new Promise(async(res,rej)=>{
+        console.log("here we go!!!")
         await axios.get(details.domain+"/"+details.url,{headers:{"Sec-Fetch-Site": "same-origin",
             "Sec-Fetch-Mode": "navigate",
             "Sec-Fetch-User": "?1",
@@ -86,6 +87,7 @@ async function getDocuments(details){
     return new Promise(async(res,rej)=>{
         try{
         const url = details.domain+"/PXP2_Documents.aspx?AGU=0";
+        console.log("here we go!!!")
         await axios.get(url,{headers:{"Cookie":details.cookies}})
             .then(response=>{
                 if(response.data.includes("ParentVUE and StudentVUE Access")){rej(new Error("Authentication Cookies Expired"))};
