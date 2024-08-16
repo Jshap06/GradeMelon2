@@ -1,151 +1,131 @@
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { Spinner } from "flowbite-react";
+import { Bar } from "react-chartjs-2";
+import {
+	Chart as ChartJS,
+	CategoryScale,
+	LinearScale,
+	BarElement,
+	Title,
+	Tooltip,
+	Legend,
+} from "chart.js";
+import {
+	Attendance as AttendanceType,
+	parseBarData,
+	chartOptions,
+	parsePeriods,
+} from "../utils/attendance";
 
+ChartJS.register(
+	CategoryScale,
+	LinearScale,
+	BarElement,
+	Legend,
+	Title,
+	Tooltip
+);
 
-function createBlobAndOpen(arrayBuffer1) {
-    const arrayBuffer = new Uint8Array(arrayBuffer1.data);
-    // Log the array buffer length for debugging purposes
-    console.log('Creating blob with array buffer length:', arrayBuffer.byteLength);
-
-    // Create a typed array (Uint8Array) from the array buffer
-    const typedArray = new Uint8Array(arrayBuffer);
-
-    // Create a Blob from the typed array
-    const blob = new Blob([typedArray], { type: 'application/pdf' });
-    console.log('Blob size:', blob.size);
-
-    // Function to check if the device is an iPhone
-    function isiPhone() {
-        return /iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    }
-
-    // Check if the window and navigator are available
-    if (typeof window !== "undefined") {
-        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-            // For IE and Edge
-            window.navigator.msSaveOrOpenBlob(blob, "document.pdf");
-        } else {
-            const blobUrl = URL.createObjectURL(blob);
-            const anchor = document.createElement('a');
-            anchor.href = blobUrl;
-
-            if (isiPhone()) {
-                anchor.target = '_self';  // Open in the current tab for iPhone
-            } else {
-                anchor.target = '_blank';  // Open in a new tab for other devices
-            }
-
-            // Add the anchor to the document body
-            document.body.appendChild(anchor);
-
-            // Trigger a click event on the anchor
-            anchor.click();
-
-            // Remove the anchor from the document body
-            document.body.removeChild(anchor);
-
-            // Clean up the object URL after some time
-            setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-        }
-    }
-}
-
-
-
-
-
-
-const parseName = (name: string): string => {
-	return new DOMParser().parseFromString(name, "text/html").documentElement
-		.textContent;
-};
-
-interface DocumentsProps {
+interface AttendanceProps {
 	client: any;
 }
 
-export default function Documents({ client }: DocumentsProps) {
-    const { data, setData } = useData();
+export default function Attendance({ client }: AttendanceProps) {
 	const router = useRouter();
-	const [documents, setDocuments] = useState([]);
 	const [loading, setLoading] = useState(true);
-    var testing;
+	const [data, setData] = useState<AttendanceType>();
+	const [barData, setBarData] = useState<any>();
+
 	useEffect(() => {
 		try {
-			setDocuments(getDocuments());
-		} catch(error) {
-		    console.log(error);
+			client.attendance().then((res) => {
+				setData(res);
+				setLoading(false);
+				let temp = parseBarData(res?.absences);
+				setBarData(temp);
+				console.log(temp);
+			});
+		} catch {
 			if (localStorage.getItem("remember") === "false") {
 				router.push("/login");
 			}
 		}
 	}, [client]);
-    console.log("does this look empty to you?");
-    console.log(documents);
+
 	return (
-		<div className="p-5 md:p-10 h-full flex-1">
+		<div className="flex-1 p-5 md:p-10">
 			<Head>
-				<title>Documents - Grade Melon</title>
+				<title>Attendance - Grade Melon</title>
 			</Head>
 			{loading ? (
 				<div className="flex justify-center">
 					<Spinner size="xl" color="pink" />
 				</div>
 			) : (
-				<div className="overflow-x-auto max-w-max shadow-md rounded-lg border border-gray-200 dark:border-gray-700">
-					<table className="text-sm text-left text-gray-500 dark:text-gray-400">
-						<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-							<tr>
-								<th scope="col" className="py-3 pl-6">
-									Date
-								</th>
-								<th scope="col" className="py-3 px-6">
-									Document
-								</th>
-								<th scope="col" className="py-3 px-6">
-									Category
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							{documents &&
-								documents.map((document, i) => (
+				<div className="w-full">
+					<div className="md:w-2/3 xl:w-1/2">
+						<Bar options={chartOptions} data={barData} />
+					</div>
+					<div className="max-w-max overflow-x-auto shadow-md rounded-lg mt-5 border border-gray-200 dark:border-gray-700">
+						<table className="text-sm text-left text-gray-500 dark:text-gray-400">
+							<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+								<tr>
+									<th scope="col" className="py-3 pl-6">
+										Date
+									</th>
+									{parsePeriods(data?.absences).map((period, i) => (
+										<th key={i} scope="col" className="py-3 px-6">
+											{period}
+										</th>
+									))}
+								</tr>
+							</thead>
+							<tbody>
+								{data?.absences.map((absence, i) => (
 									<tr
+										key={i}
 										className={`bg-${
 											i % 2 == 0 ? "white" : "gray-50"
 										} border-b dark:bg-gray-${
 											i % 2 == 0 ? 900 : 800
 										} dark:border-gray-700`}
-										key={i}
 									>
 										<th
 											scope="row"
 											className="py-4 pl-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
 										>
-											{document.file.date}
+											{absence.date.toLocaleDateString()}
 										</th>
-										<td className="py-4 px-6">
-											<a
-												onClick={async () => {
-												    if(typeof(document.base64)=="undefined"){
-													let download = await client.getDocument(document.index);
-													document.base64=download;
-													console.log(download);
-													}
-													createBlobAndOpen(document.base64);
+
+										{parsePeriods(data?.absences).map((period, x) => (
+											<td
+												key={x}
+												scope="col"
+												className="py-3 px-6"
+												style={{
+													color: barData?.datasets.find(
+														(x) =>
+															x.label ===
+															absence.periods.find(
+																(p) => p.period === parseInt(period)
+															)?.name
+													)?.backgroundColor,
 												}}
-												href="#"
 											>
-												{document.file.name}
-											</a>
-										</td>
-										<td className="py-4 px-6">{document.category}</td>
+												{
+													absence.periods.find(
+														(p) => p.period === parseInt(period)
+													)?.name
+												}
+											</td>
+										))}
 									</tr>
 								))}
-						</tbody>
-					</table>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			)}
 		</div>

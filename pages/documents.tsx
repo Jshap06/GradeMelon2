@@ -2,9 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { Spinner } from "flowbite-react";
+import { BufferSource } from "stream/web";
 
+interface stringifiedBuffer{ // type decleration to handle the fact that the arrayBuffer ends up stringified, i could restore it from stringified before returning it in Client.js, but whatever
+	data:Array<number>;
+	type:"Buffer";
 
-function createBlobAndOpen(arrayBuffer1:{arrayBuffer1:any}) {
+}
+
+function createBlobAndOpen(arrayBuffer1:stringifiedBuffer) {
 	console.log(arrayBuffer1);
     const arrayBuffer = new Uint8Array(arrayBuffer1.data); //genuinely have no clue how ANY of this works, chatGPT wrote this function. where tf does the.data property come frm. No CLUE. but it
     // Log the array buffer length for debugging purposes
@@ -17,14 +23,22 @@ function createBlobAndOpen(arrayBuffer1:{arrayBuffer1:any}) {
     const blob = new Blob([typedArray], { type: 'application/pdf' });
     console.log('Blob size:', blob.size);
 
-    // Function to check if the device is an iPhone
-    function isiPhone() {
-        return /iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+     function isiPhone(): boolean {
+        return /iPhone|iPod/.test(navigator.userAgent) && !hasMSStream(window);
+    }
+
+    // Type guard for navigator
+    function hasMsSaveOrOpenBlob(navigator: Navigator): navigator is Navigator & { msSaveOrOpenBlob: (blob: Blob, defaultName?: string) => boolean } {
+        return 'msSaveOrOpenBlob' in navigator;
+    }
+
+	function hasMSStream(window: Window): window is Window & { MSStream: any } {
+        return 'MSStream' in window;
     }
 
     // Check if the window and navigator are available
     if (typeof window !== "undefined") {
-        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+        if (hasMsSaveOrOpenBlob(window.navigator)) {
             // For IE and Edge
             window.navigator.msSaveOrOpenBlob(blob, "document.pdf");
         } else {
@@ -67,7 +81,7 @@ interface DocumentsProps {
 	createError: (message:string)=>any;
 }
 
-export default function Documents({ client, setToasts,setreRender,reRender,login,createError }: DocumentsProps) {
+export default function Documents({ client,createError }: DocumentsProps) {
 	const router = useRouter();
 	const [documents, setDocuments] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -82,17 +96,16 @@ export default function Documents({ client, setToasts,setreRender,reRender,login
 			setLoading(false)})
             }
 		try {
-		if(client.documents.length!=0){setDocuments(client.documents)}else{
+		if(client.documents.length!=0){
+			setDocuments(client.documents)
+			setLoading(false)
+			
+		}else{
 			getDocs();}
 		} catch(error) {
-
-
-	
-			if (localStorage.getItem("remember") === "false") {
-				router.push("/login");
-			}
+			console.log(error)
 		}
-	}, [reRender,client]);
+	}, [client]);
     console.log("does this look empty to you?");
     console.log(documents);
 	return (
@@ -143,7 +156,7 @@ export default function Documents({ client, setToasts,setreRender,reRender,login
 												    if(typeof(document.base64)=="undefined"){
 													await client.getDocument(document.index).then(download=>{
 														console.log(download);
-														if(download.trouble){setreRender(!reRender)}
+														if(download.trouble){setDocuments(client.documents)}
 														document.base64=download.download;
 														console.log(download);
 														createBlobAndOpen(document.base64);

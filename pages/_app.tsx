@@ -13,6 +13,7 @@ import { HiX } from "react-icons/hi";
 import BackgroundColor from "../components/BackgroundColor";
 import { AnimateSharedLayout } from "framer-motion";
 import useWindowSize from '../hooks/useWindowSize';
+import Cookies from "js-cookie";
 
 interface Toast {
 	title: string;
@@ -36,32 +37,31 @@ function MyApp({ Component, pageProps }) {
 
 	const login = async (username: string, password: string, save: boolean) => {
 		setLoading(true);
-		const student = new Client({ username, password });
+		const student = new Client({ username, password },districtURL);
 		try {
 			await student.refresh();
 			setClient(student);
 			if (save) {
 				localStorage.setItem("remember", "true");
 				localStorage.setItem("username", username);
-				localStorage.setItem("password", password);
+				Cookies.set('password',password,{expires:15/(24*60),secure:false,sameSite:"Lax"})
 				localStorage.setItem("districtURL", districtURL);
 			} else {
 				localStorage.setItem("remember", "false");
-				localStorage.removeItem("username");
+				Cookies.remove("username");
 				localStorage.removeItem("password");
 			}
 			setLoading(false);
 			return true;
 		} catch (err) {
 			console.error(err);
-			setToasts((toasts) => [...toasts, { title: err.message, type: "error" }]);
-			setTimeout(() => {
-				setToasts((toasts) => toasts.slice(1));
-			}, 5000);
+			createError(err.message);
 			setLoading(false);
 			return false;
 		}
 	};
+
+
 
 	const logout = async () => {
 		setClient(undefined);
@@ -69,10 +69,10 @@ function MyApp({ Component, pageProps }) {
 		setStudentInfo(undefined);
 		setGrades(undefined);
 		if(localStorage.getItem("remember")=="false"){localStorage.removeItem("username")}
-		localStorage.removeItem("password");
+		Cookies.remove("password");
 	};
 
-	function createError(message){
+	function createError(message:string){
 		setToasts((toasts) => [...toasts, { title: message, type: "error" }]);
 			setTimeout(() => {
 				setToasts((toasts) => toasts.slice(1));
@@ -81,7 +81,7 @@ function MyApp({ Component, pageProps }) {
 
 	useEffect(()=>{
 		console.log("major tom")
-		async function asyncdoer(){await client.getStudentInfo().then(info=>{setStudentInfo(info)}).catch(error=>{createError(error.message)})}
+		async function asyncdoer(){await client.getStudentInfo().then(info=>{setStudentInfo(info)}).catch(error=>{createError(error.message);})}
 		if(studentInfo===undefined&&client!=undefined){
 			console.log("tsting testing")
 			asyncdoer()
@@ -95,15 +95,11 @@ function MyApp({ Component, pageProps }) {
 
 	useEffect(() => {
 		async function doLogin(){
-			await login(localStorage.getItem("username"),localStorage.getItem("password"),true)}
-		if(client===undefined&&localStorage.getItem("username")!=null&&localStorage.getItem("password")!=null){
+			await login(localStorage.getItem("username"),Cookies.get("password"),true)}
+		if(client===undefined&&localStorage.getItem("username")!=null&&Cookies.get("password")!=undefined){
 			doLogin();
 			
-		}
-
-		if (router.pathname === "/") {
-			router.push("/login");
-		}
+		}else{if(client===undefined&&!noShowNav.includes(router.pathname)){router.push("/login")}}
 	}, []);
 
 	return (

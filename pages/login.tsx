@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { Modal, Spinner } from "flowbite-react";
 import { BiSearchAlt } from "react-icons/bi";
 import Head from "next/head";
+import StudentVue from "studentvue";
 import allDistricts from "../lib/districts";
 
 interface LoginProps {
@@ -60,16 +61,18 @@ export default function Login({
         }
 	}, []);
 
-	const findDistricts = () => {
-		var found=false;
-		allDistricts.forEach((district)=>{
-			if(district.zipcode.includes(zipCode)){
-				setDistrictURL(district.parentVueUrl);
-				found=true;
-			}
-		})
-		if(!found){createError("District Not Found")}
+	const findDistricts = async () => {
+		StudentVue.findDistricts(zipCode)
+			.then((res) => {
+				setDisstricts(res);
+				setDistrictURL(res[0])
+			})
+			.catch((err) => {
+				console.log(err);
+				createError(err.message)
+			});
 	};
+
 
 	return (
 		<div>
