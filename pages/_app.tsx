@@ -89,7 +89,7 @@ function MyApp({ Component, pageProps }) {
 			console.log(studentInfo)
 		}
 
-	},[client])
+	},[client,studentInfo])
 
 
 
@@ -100,12 +100,20 @@ function MyApp({ Component, pageProps }) {
 			doLogin();
 			
 		}else{if(client===undefined&&!noShowNav.includes(router.pathname)){router.push("/login")}}
-	}, []);
+	}, [client]);
 
 	return (
 		<Flowbite>
 			<Head>
 				<title>Grade Melon</title>
+
+			</Head>
+			<Script
+				async
+				src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5925944145079992"
+				crossOrigin="anonymous"
+				strategy="beforeInteractive"
+			/>
 				<Script
 					defer
 					data-domain="grademelon.com"
@@ -116,13 +124,6 @@ function MyApp({ Component, pageProps }) {
 					src="https://static.cloudflareinsights.com/beacon.min.js"
 					data-cf-beacon='{"token": "c01b4332f8c346bdbf9df1938384019b"}'
 				></Script>
-			</Head>
-			<Script
-				async
-				src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5925944145079992"
-				crossOrigin="anonymous"
-				strategy="beforeInteractive"
-			/>
 			<div className="absolute p-5 z-20">
 				{toasts.map(({ title, type }, i) => (
 					<div className="mb-5 z-50" key={i}>
