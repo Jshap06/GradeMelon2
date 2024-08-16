@@ -14,13 +14,14 @@ import BackgroundColor from "../components/BackgroundColor";
 import { AnimateSharedLayout } from "framer-motion";
 import useWindowSize from '../hooks/useWindowSize';
 import Cookies from "js-cookie";
+import { Analytics } from "@vercel/analytics/react";
 
 interface Toast {
 	title: string;
 	type: "success" | "error" | "warning" | "info";
 }
 
-const noShowNav = ["/login", "/privacy", "/letter"];
+const noShowNav = ["/login", "/", "/privacy", "/letter"];
 
 function MyApp({ Component, pageProps }) {
 	const router = useRouter();
@@ -104,6 +105,7 @@ function MyApp({ Component, pageProps }) {
 
 	return (
 		<Flowbite>
+			<Analytics/>
 			<Head>
 				<title>Grade Melon</title>
 
