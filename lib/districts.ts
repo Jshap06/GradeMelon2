@@ -1,4 +1,9 @@
-export default [
+const districts:{
+    address: string;
+    name: string;
+    parentVueUrl: string;
+    zipcode?: string;
+}[] = [
     {'address': 'Cottonwood AZ 86326', 'name': 'A Center for Creative Education', 'parentVueUrl': 'https://az-acce.edupoint.com/', 'zipcode': '86326'},
     {'address': 'Clinton Township MI 48035', 'name': 'ATS Educational Consulting dba My Virtual Academy', 'parentVueUrl': 'https://mi-atsec.edupoint.com/', 'zipcode': '48035'},
     {'address': 'Tucson AZ 85745', 'name': 'AZ Schools for the Deaf and Blind', 'parentVueUrl': 'https://az-asdb.edupoint.com', 'zipcode': '85745'},
@@ -672,3 +677,5 @@ export default [
     {'address': 'Yuma AZ 85364', 'name': 'Yuma School District #1', 'parentVueUrl': 'https://az-yesd-psv.edupoint.com/', 'zipcode': '85364'},
     {'address': 'Yuma AZ 85364-7998', 'name': 'Yuma Union High School District', 'parentVueUrl': 'https://az-yuhsd-psv.edupoint.com/', 'zipcode': '85364-7998'}
     ]
+
+export default districts;
