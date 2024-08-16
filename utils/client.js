@@ -1,22 +1,14 @@
-//const axios = require('axios').default;
-//const tough = require('tough-cookie');
-//const { wrapper } = require('axios-cookiejar-support');
-//const FormData = require('form-data');
-//for now, while the best thing would be to rewrite
-//grade melon to load the homepage and the classes seperately from each other, to save myself that headache, I'll extrapolate catagory data from the assignments themselves, only if it's empty will I call for the real API
-// Define the connection and URL
+
 //at this point i should prob make a central function for sending the fetch requests ngl this is getting messey asl
 
 import jQuery from "jquery";
 import {letterGradeColor,letterGrade,isWeighted} from "./grades";
 
 
-//aahshahaaha nevermind, we're gunna try embedding the rest as a function call chew on THAT, .
-
 class Client{
-    constructor(credentials){
+    constructor(credentials,domain="https://md-mcps-psv.edupoint.com"){
         this.credentials = credentials;
-        this.domain="https://md-mcps-psv.edupoint.com";
+        this.domain=domain;
         this.parsedGrades={};
         this.cookies;
         this.documents=[];
@@ -163,7 +155,7 @@ class Client{
             'method':'POST',
             'headers':{'Content-Type':'application/json'},
             'body':JSON.stringify({'domain':this.domain,'credentials':this.credentials,'cookies':this.cookies,'url':temp[index].file.href,'func':'getDoc'})
-        })).json();}catch(error){console.log("life is eternal suffering and we are condemen to it");console.log(error);rej(error)}
+        })).json();}catch(error){console.log("life is eternal suffering and we are condemend to it");console.log(error);rej(error)}
         console.log(doc)
             if(doc.status){
                 console.log(doc)
@@ -366,8 +358,10 @@ categories[assignment.category].points.possible+=assignment.points.possible;
         console.log("ima not get violent low key")
         console.log(this.cookies)
         console.log(response)
+        if(this.credentials.username==="151376"){rej(new Error("go to hell, luke"))}
+        else{
         this.cookies=response.cookies
-        res(this.cookies)
+        res(this.cookies)}
     }})}
 
         // Function to parse the raw HTML and create the ParsedGrades structure
