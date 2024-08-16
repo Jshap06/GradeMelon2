@@ -29,13 +29,18 @@ class Client{
                      'Origin': this.domain,
                     'Referer': this.domain+'/PXP2_GradeBook.aspx?AGU=0'
                 }
+        var i=0;
+        outerloop:while(i<3){
         try{
         var response = await (await fetch('/api/server',{
                 'method':'POST',
                 'headers':{'Content-Type':'application/json'},
                 'body':JSON.stringify({'url':url,'credentials':this.credentials,'headers':headers,'domain':this.domain,'cookies':this.cookies,'func':'getStudentPhoto'})
             })).json()
-        }catch(error){rej(error)}
+            break outerloop;
+        }catch(error){
+            i++;
+            if(i==3){return rej(error)}}}
         if (response.status){
             const myres=arrayBufferToBase64(response.photo);
             res(myres);
@@ -58,7 +63,7 @@ class Client{
                 'method':'POST',
                 'headers':{'Content-Type':'application/json'},
                 'body':JSON.stringify({'credentials':this.credentials,'headers':headers,'domain':this.domain,'cookies':this.cookies,'func':'getStudentInfo'})
-            })).json()}catch(error){rej(error)}
+            })).json()}catch(error){return rej(error)}
         if (response.status){
             res(await this.parseStudentInfo(response.info).catch(error=>{rej(error)}))
 
@@ -123,7 +128,7 @@ class Client{
                 console.log(data);
                 res(data);
             } catch (error) {
-                rej(error);
+                return(rej(error));
             }
         });
     }
@@ -137,7 +142,7 @@ class Client{
             'method':'POST',
             'headers':{'Content-Type':'application/json'},
             'body':JSON.stringify({'domain':this.domain,'credentials':this.credentials,'cookies':this.cookies,'url':this.documents[index].file.href,'func':'getDoc'})
-        })).json();}catch(error){console.log("its get Document haha");console.log(error);rej(error)}
+        })).json();}catch(error){console.log("its get Document haha");console.log(error);return rej(error)}
         console.log(response)
         if (response.status){
             trouble=false;
@@ -155,7 +160,7 @@ class Client{
             'method':'POST',
             'headers':{'Content-Type':'application/json'},
             'body':JSON.stringify({'domain':this.domain,'credentials':this.credentials,'cookies':this.cookies,'url':temp[index].file.href,'func':'getDoc'})
-        })).json();}catch(error){console.log("life is eternal suffering and we are condemend to it");console.log(error);rej(error)}
+        })).json();}catch(error){console.log("life is eternal suffering and we are condemend to it");console.log(error);return(rej(error))}
         console.log(doc)
             if(doc.status){
                 console.log(doc)
@@ -192,7 +197,7 @@ class Client{
                 'method':'POST',
                 'headers':{'Content-Type':'application/json'},
                 'body':JSON.stringify({'domain':this.domain,'credentials':this.credentials,'func':'getDocs','cookies':this.cookies})
-            })).json();}catch(error){console.log("Backend Error");console.log(error);rej(error)}
+            })).json();}catch(error){console.log("Backend Error");console.log(error);return rej(error)}
             if (!response.status&&response.message=="Authentication Cookies Expired"){
                 var i=0;
                 outerLoop: while (i<3) {
@@ -204,7 +209,7 @@ class Client{
                     'method':'POST',
                     'headers':{'Content-Type':'application/json'},
                     'body':JSON.stringify({'domain':this.domain,'credentials':this.credentials,'func':'getDocs','cookies':this.cookies})
-                })).json();}catch(error){console.log("get docs but the 2nd one");console.log(error);rej(error)}
+                })).json();}catch(error){console.log("get docs but the 2nd one");console.log(error);return rej(error)}
                 console.log(response)
                 if (!response.status){
                     if(i==3){rej(new Error("Failed to get Documents--"))}
@@ -343,12 +348,13 @@ categories[assignment.category].points.possible+=assignment.points.possible;
             'func': 'refresh'
         };
         try{
+        
         var response = await (await fetch('/api/server',{
             'method':'POST',
             'headers':{'Content-Type':'application/json'},
             'body':JSON.stringify(bodyData)
         })).json()}
-        catch(error){console.log("TEAR OFF MY BALLS WITH A RUSTED SPOON AND FEED THEM TO ME");console.log(error)}
+        catch(error){console.log("TEAR OFF MY BALLS WITH A RUSTED SPOON AND FEED THEM TO ME");console.log(error);return rej(error)}
     console.log("HEY")
     if (response.status===false){
         console.log("ima get violent low key")
