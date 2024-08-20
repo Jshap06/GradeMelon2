@@ -32,7 +32,13 @@ interface AttendanceProps {
 	client: any;
 }
 
-export default function Attendance({ client }: AttendanceProps) {
+import NotFound from "./404"
+
+export default function(){
+	return(<NotFound></NotFound>)
+}
+
+export function Attendance({ client }: AttendanceProps) {
 	const router = useRouter();
 	const [loading, setLoading] = useState(true);
 	const [data, setData] = useState<AttendanceType>();

@@ -98,8 +98,16 @@ export default function FAQ() {
 
 					<p className="px-4 mt-4 leading-relaxed dark:text-white">
 						To send feedback regarding Grade Melon, please email{" "}
-						<a href="mailto:tinu@grademelon.com" className="text-primary-500">
-							tinu@grademelon.com
+						<a href="mailto:support@grademelon.org" className="text-primary-500">
+							support@grademelon.org
+						</a>
+						.
+					</p>
+					<br/>
+					<p className="px-4 mt-4 leading-relaxed dark:text-white">
+						Or feel free to join our discord {" "}
+						<a href="https://discord.gg/nwRs8WcQGc" className="text-primary-500">
+							GradeMelon Discord
 						</a>
 						.
 					</p>
