@@ -18,6 +18,7 @@ import {
 	chartOptions,
 	parsePeriods,
 } from "../utils/attendance";
+import NotFound from "../components/404";
 
 ChartJS.register(
 	CategoryScale,
@@ -32,13 +33,10 @@ interface AttendanceProps {
 	client: any;
 }
 
-import NotFound from "./404"
 
-export default function(){
-	return(<NotFound></NotFound>)
-}
 
-export function Attendance({ client }: AttendanceProps) {
+
+export default function Attendance({ client }: AttendanceProps) {
 	const router = useRouter();
 	const [loading, setLoading] = useState(true);
 	const [data, setData] = useState<AttendanceType>();
@@ -65,6 +63,7 @@ export function Attendance({ client }: AttendanceProps) {
 			<Head>
 				<title>Attendance - Grade Melon</title>
 			</Head>
+			<NotFound/>
 			{loading ? (
 				<div className="flex justify-center">
 					<Spinner size="xl" color="pink" />

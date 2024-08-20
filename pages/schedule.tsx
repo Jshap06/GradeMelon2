@@ -3,10 +3,12 @@ import { Spinner } from "flowbite-react";
 import { useRouter } from "next/router";
 import { Schedule as ScheduleType } from "../utils/schedule";
 import Head from "next/head";
+import NotFound from "../components/404";
 
 interface ScheduleProps {
 	client: any;
 }
+
 
 export default function Schedule({ client }: ScheduleProps) {
 	const router = useRouter();
@@ -34,6 +36,7 @@ export default function Schedule({ client }: ScheduleProps) {
 			<Head>
 				<title>Schedule - Grade Melon</title>
 			</Head>
+			<NotFound/>
 			{loading ? (
 				<div className="flex justify-center">
 					<Spinner size="xl" color="pink" />
