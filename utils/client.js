@@ -292,7 +292,7 @@ categories[assignment.category].points.possible+=assignment.points.possible;
             }
             )});
     const categories2=[];
-    for (let category of Object.keys(categories)){     categories[category].grade.raw=categories[category].points.earned/categories[category].points.possible;
+    for (let category of Object.keys(categories)){     categories[category].grade.raw=(categories[category].points.earned/categories[category].points.possible)*100;categories[category].grade.color=letterGradeColor(letterGrade((categories[category].points.earned/categories[category].points.possible)*100));
     categories2.push(categories[category]);                               //aslo here you'd do the colors and leter grade functions
     };
 
@@ -351,7 +351,15 @@ categories[assignment.category].points.possible+=assignment.points.possible;
         console.log(response.grades)
         return res(response.grades)}
         else{
-            return rej (new Error(response.message))
+            try{
+            var response = await (await fetch(expressUrl+'/getHomePageGrades',{
+                'method':'POST',
+                'headers':{'Content-Type':'application/json'},
+                'body':JSON.stringify({'credentials':this.credentials, 'domain':this.domain,'cookies':this.cookies,'selector':selection})
+            })).json()}catch(error){console.log(error);return rej(new Error(error.message))}
+            if(response.status){
+                return res(response.grades)
+            }
         }
     })}
 
