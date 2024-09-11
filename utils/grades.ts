@@ -12,8 +12,8 @@ interface Assignment {
 		possible: number;
 	};
 	date: {
-		due: Date;
-		assigned: Date;
+		due: string;
+		assigned: string;
 	};
 	category: string;
 }
@@ -55,10 +55,12 @@ interface Grades {
 	period: {
 		name: string;
 		index: number;
+		gu:string;
 	};
 	periods: {
 		name: string;
 		index: number;
+		gu:string;
 	}[];
 }
 
@@ -89,6 +91,7 @@ const letterGrade = (grade: number): string => {
 	} else if (grade >= 59.5) {
 		return "D";
 	} else if (!isNaN(grade)) {
+		console.log(grade)
 		return "E";
 	} else {
 		return "N/A";
@@ -443,8 +446,8 @@ const addAssignment = (course: Course): Course => {
 			possible: 0,
 		},
 		date: {
-			due: new Date(),
-			assigned: new Date(),
+			due: "",
+			assigned: "",
 		},
 		category: course.categories.length ? course.categories[0].name : "N/A",
 	});
