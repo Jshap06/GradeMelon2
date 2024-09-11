@@ -107,20 +107,21 @@ export default function Grades({
 
 	const update = (p: number) => {
 		async function asyncDoer(p){
+			grades.courses.forEach((value,index)=>{grades.courses[index].assignments=null;grades.courses[index].categories=null})
+			await client.getparseAssignments(parseInt(index as string),grades,"",p).then(newgrades=>{grades.courses[parseInt(index as string)]=newgrades.courses[parseInt(index as string)];setPeriod(p);
+				setLoading(false);}).catch(error=>{createError(error)})
+			console.log("AHH FUCK SHIT")
 			for(const [index1,value] of grades.courses.entries()){
-				await client.getparseAssignments(index1,grades,"",p).then(newgrades=>{grades.courses[index]=newgrades.courses[index]}).catch(error=>createError(error))
+				if(index1!=parseInt(index as string)){
+				await client.getparseAssignments(index1,grades,"",p).then(newgrades=>{grades.courses[index1]=newgrades.courses[index1]}).catch(error=>createError(error))
+				}
 			}
 		}
 		console.log(p);
 		setLoading(true);
-		client.getparseGrades(grades.periods[p].gu).then(res=>{setGrades(res)
-			client.getparseAssignments(index,grades,"",p).then(newgrades=>{
-				grades.courses[index]=newgrades.courses[index];setPeriod(p);
-				setLoading(false);
-				asyncDoer(p);
+		client.getparseGrades(grades.periods[p].gu).then(res=>{setGrades(res);asyncDoer(p)
 			}).catch(error=>{createError(error.message)})
 
-		})
 	};
 
 	const optimize = () => {
