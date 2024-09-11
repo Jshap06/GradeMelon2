@@ -183,106 +183,7 @@ const parseAssignmentName = (name: string): string => {
 	).documentElement.textContent;
 };
 
-const parseGrades = (grades: Gradebook): Grades => {
-	for (let i = 0; i < grades.courses.length; i++) {
-		if (grades.courses[i].marks.length === 0) {
-			grades.courses[i].marks = [
-				{
-					calculatedScore: { raw: NaN, string: "N/A" },
-					weightedCategories: [],
-					assignments: [],
-					name: "",
-				},
-			];
-		}
-	}
-	//returns a structure with the gradebook shit AND allllll the fucking asssignemtns. oh brother....
-	let parsedGrades = {
-		gpa:
-			grades.courses.reduce(
-				(a, b) =>
-					a +
-					letterGPA(letterGrade(b.marks[0].calculatedScore.raw), false),
-				0
-			) / grades.courses.length,
-		wgpa:
-			grades.courses.reduce(
-				(a, b) =>
-					a +
-					letterGPA(
-						letterGrade(b.marks[0].calculatedScore.raw),
-						isWeighted(b.title)
-					),
-				0
-			) / grades.courses.length,
-		courses: grades.courses.map(({ title, period, room, staff, marks }, i) => ({
-			name: stripParens(title),
-			period: period ? period : i + 1,
-			room: room,
-			weighted: isWeighted(title),
-			grade: {
-				letter: letterGrade(marks[0].calculatedScore.raw),
-				raw: marks[0].calculatedScore.raw,
-				color: letterGradeColor(letterGrade(marks[0].calculatedScore.raw)),
-			},
-			teacher: {
-				name: staff.name,
-				email: staff.email,
-			},
-			categories: marks[0].weightedCategories
-				.map(({ type, weight, points }) => ({
-					name: type,
-					weight: parseFloat(weight.standard) / 100,
-					grade: {
-						letter: letterGrade((points.current / points.possible) * 100),
-						raw: parseFloat(
-							((points.current / points.possible) * 100).toFixed(2)
-						),
-						color: letterGradeColor(
-							letterGrade((points.current / points.possible) * 100)
-						),
-					},
-					points: {
-						earned: points.current,
-						possible: points.possible,
-					},
-				}))
-				.filter((category) => !category.name.toLowerCase().includes("total")),
-			assignments: marks[0].assignments.map(({ name, date, points, type }) => ({
-				name: parseAssignmentName(name),
-				grade: {
-					letter: letterGrade(parsePoints(points).grade),
-					raw: parseFloat(parsePoints(points).grade.toFixed(2)),
-					color: letterGradeColor(letterGrade(parsePoints(points).grade)),
-				},
-				points: {
-					earned: parsePoints(points).earned,
-					possible: parsePoints(points).possible,
-				},
-				date: {
-					due: date.start,
-					assigned: date.due,
-				},
-				category: type,
-			})),
-		})),
-		period: {
-			name: grades.reportingPeriod.current.name,
-			index: grades.reportingPeriod.current.index,
-		},
-		periods: grades.reportingPeriod.available.map(({ name, index, date }) => ({
-			name: `${name} (${parseDate(date)})`,
-			index: index,
-		})),
-	};
-	parsedGrades.courses.map((course) => {
-		course.categories.map((category, i) => {
-			course = calculateCategory(course, i);
-		});
-		calculateGrade(course);
-	});
-	return parsedGrades;
-};
+
 
 let solutions = [];
 const recur = (
@@ -539,7 +440,6 @@ const updateCourse = (
 };
 
 export {
-	parseGrades,
 	updateCourse,
 	addAssignment,
 	delAssignment,
