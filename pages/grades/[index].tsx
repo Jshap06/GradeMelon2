@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Spinner, Modal } from "flowbite-react";
 import { useRouter } from "next/router";
 import {
-	parseGrades,
 	updateCourse,
 	addAssignment,
 	delAssignment,

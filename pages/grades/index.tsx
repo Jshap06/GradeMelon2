@@ -6,7 +6,6 @@ import Head from "next/head";
 
 import { TbRefresh, TbMathSymbols } from "react-icons/tb";
 import {
-	parseGrades,
 	Grades as GradesType,
 	calculateGPA,
 	updateGPA,
