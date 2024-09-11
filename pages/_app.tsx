@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef} from "react";
 import "../styles/globals.css";
 import Client from "../utils/client";
 import { useRouter } from "next/router";
@@ -30,22 +30,23 @@ function MyApp({ Component, pageProps }) {
 	const [studentInfo, setStudentInfo] = useState(undefined);
 	const [toasts, setToasts] = useState<Toast[]>([]);
 	const [grades, setGrades] = useState<Grades>();
+	const [grades2,setGrades2] = useState(undefined);
 	const [period, setPeriod] = useState<number>();
 	const [loading, setLoading] = useState(false);
 	const [reRender,setreRender]=useState(false);
 	const { width } = useWindowSize();
 	const isMediumOrLarger = width >= 768;
 
-	const login = async (username: string, password: string, save: boolean) => {
+	const login = async (username: string, password: string, save: boolean,cookie=false) => {
 		setLoading(true);
 		const student = new Client({ username, password },districtURL);
 		try {
-			await student.refresh();
+			await student.refresh(cookie);
 			setClient(student);
 			if (save) {
 				localStorage.setItem("remember", "true");
 				localStorage.setItem("username", username);
-				Cookies.set('password',password,{expires:15/(24*60),secure:false,sameSite:"Lax"})
+				Cookies.set('password',student.credentials.password,{expires:10000,secure:false,sameSite:"Lax"})
 				localStorage.setItem("districtURL", districtURL);
 			} else {
 				localStorage.setItem("remember", "false");
@@ -96,11 +97,11 @@ function MyApp({ Component, pageProps }) {
 
 	useEffect(() => {
 		async function doLogin(){
-			await login(localStorage.getItem("username"),Cookies.get("password"),true)}
+			await login(localStorage.getItem("username"),Cookies.get("password"),true,true)}
 		if(client===undefined&&localStorage.getItem("username")!=null&&Cookies.get("password")!=undefined){
 			doLogin();
 			
-		}else{if(client===undefined&&!noShowNav.includes(router.pathname)){router.push("/login")}}
+		}else{if(client===undefined&&(!noShowNav.includes(router.pathname)||router.pathname=="/")){router.push("/login")}}
 	}, [client]);
 
 	return (
@@ -168,6 +169,8 @@ function MyApp({ Component, pageProps }) {
 								setreRender={setreRender}
 								reRender={reRender}
 								createError={createError}
+								grades2={grades2}
+								setGrades2={setGrades2}
 							/>
 						</AnimateSharedLayout>
 					)}
@@ -192,6 +195,8 @@ function MyApp({ Component, pageProps }) {
 										setreRender={setreRender}
 										reRender={reRender}
 										createError={createError}
+										grades2={grades2}
+										setGrades2={setGrades2}
 									/>
 								</AnimateSharedLayout>
 							</div>
@@ -216,6 +221,8 @@ function MyApp({ Component, pageProps }) {
 										setreRender={setreRender}
 										reRender={reRender}
 										createError={createError}
+										grades2={grades2}
+										setGrades2={setGrades2}
 									/>
 								</AnimateSharedLayout>
 								<div className="px-4 fixed bottom-5 w-full">
