@@ -5,6 +5,8 @@ import jQuery from "jquery";
 import {letterGradeColor,letterGrade,isWeighted} from "./grades";
 
 
+const expressUrl="https://desirable-rebirth-production.up.railway.app";
+
 class Client{
     constructor(credentials,domain="https://md-mcps-psv.edupoint.com"){
         this.credentials = credentials;
@@ -32,15 +34,15 @@ class Client{
         var i=0;
         outerloop:while(i<3){
         try{
-        var response = await (await fetch('/api/server',{
+        var response = await (await fetch(expressUrl+"/getStudentPhoto",{
                 'method':'POST',
                 'headers':{'Content-Type':'application/json'},
-                'body':JSON.stringify({'url':url,'credentials':this.credentials,'headers':headers,'domain':this.domain,'cookies':this.cookies,'func':'getStudentPhoto'})
+                'body':JSON.stringify({'url':url,'credentials':this.credentials,'headers':headers,'domain':this.domain,'cookies':this.cookies})
             })).json()
             break outerloop;
         }catch(error){
             i++;
-            if(i==3){return rej(error)}}}
+            if(i==3){if(error.message=="Failed to fetch"){return rej(new Error("Network Error"))}else{return rej(error)}}}}
         if (response.status){
             const myres=arrayBufferToBase64(response.photo);
             res(myres);
@@ -59,11 +61,11 @@ class Client{
                     'Referer': this.domain+'/PXP2_GradeBook.aspx?AGU=0'
                 }
         try{
-        var response = await (await fetch('/api/server',{
+        var response = await (await fetch(expressUrl+'/getStudentInfo',{
                 'method':'POST',
                 'headers':{'Content-Type':'application/json'},
                 'body':JSON.stringify({'credentials':this.credentials,'headers':headers,'domain':this.domain,'cookies':this.cookies,'func':'getStudentInfo'})
-            })).json()}catch(error){return rej(error)}
+            })).json()}catch(error){if(error.message=="Failed to fetch"){return rej(new Error("Network Error"))}else{return rej(error)}}
         if (response.status){
             res(await this.parseStudentInfo(response.info).catch(error=>{rej(error)}))
 
@@ -138,11 +140,11 @@ class Client{
         var trouble;
         console.log(this.documents[index].file.name);
         try{
-        var response=await (await fetch('/api/server/',{
+        var response=await (await fetch(expressUrl+'/getDocument',{
             'method':'POST',
             'headers':{'Content-Type':'application/json'},
-            'body':JSON.stringify({'domain':this.domain,'credentials':this.credentials,'cookies':this.cookies,'url':this.documents[index].file.href,'func':'getDoc'})
-        })).json();}catch(error){console.log("its get Document haha");console.log(error);return rej(error)}
+            'body':JSON.stringify({'domain':this.domain,'credentials':this.credentials,'cookies':this.cookies,'url':this.documents[index].file.href})
+        })).json();}catch(error){console.log("its get Document haha");console.log(error);if(error.message=="Failed to fetch"){return rej(new Error("Network Error"))}else{return rej(error)}}
         console.log(response)
         if (response.status){
             trouble=false;
@@ -156,10 +158,10 @@ class Client{
                 this.documents=[]; // ultiamtely, to solve the above I need to comb through the network shit on synergy see if there's smthn im missing to sustain the cookies longer or smthn
             let temp=await this.getDocuments(true).catch(rej1=>{rej(rej1)})
             try{
-            var doc=await (await fetch('/api/server/',{
+            var doc=await (await fetch(expressUrl+'/getDocument',{
             'method':'POST',
             'headers':{'Content-Type':'application/json'},
-            'body':JSON.stringify({'domain':this.domain,'credentials':this.credentials,'cookies':this.cookies,'url':temp[index].file.href,'func':'getDoc'})
+            'body':JSON.stringify({'domain':this.domain,'credentials':this.credentials,'cookies':this.cookies,'url':temp[index].file.href})
         })).json();}catch(error){console.log("life is eternal suffering and we are condemend to it");console.log(error);return(rej(error))}
         console.log(doc)
             if(doc.status){
@@ -193,23 +195,23 @@ class Client{
             console.log("CLEAR");
             this.documents=[]};
             try{
-            var response=await (await fetch('/api/server/',{
+            var response=await (await fetch(expressUrl+'/getDocuments',{
                 'method':'POST',
                 'headers':{'Content-Type':'application/json'},
-                'body':JSON.stringify({'domain':this.domain,'credentials':this.credentials,'func':'getDocs','cookies':this.cookies})
-            })).json();}catch(error){console.log("Backend Error");console.log(error);return rej(error)}
-            if (!response.status&&response.message=="Authentication Cookies Expired"){
+                'body':JSON.stringify({'domain':this.domain,'credentials':this.credentials,'cookies':this.cookies})
+            })).json();}catch(error){console.log("Backend Error");console.log(error);if(error.message=="Failed to fetch"){return rej(new Error("Network Error"))}else{return rej(error)}}
+            if (!response.status){
                 var i=0;
                 outerLoop: while (i<3) {
                     i++;
-                await this.refresh().catch(rej1=>{rej(rej1)})
+                await this.refresh(true).catch(rej1=>{rej(rej1)})
                 console.log(this.cookies)
                 try{
-                  response=await (await fetch('/api/server/',{
+                  response=await (await fetch(expressUrl+'/getDocuments',{
                     'method':'POST',
                     'headers':{'Content-Type':'application/json'},
-                    'body':JSON.stringify({'domain':this.domain,'credentials':this.credentials,'func':'getDocs','cookies':this.cookies})
-                })).json();}catch(error){console.log("get docs but the 2nd one");console.log(error);return rej(error)}
+                    'body':JSON.stringify({'domain':this.domain,'credentials':this.credentials,'cookies':this.cookies})
+                })).json();}catch(error){console.log("get docs but the 2nd one");console.log(error);if(error.message=="Failed to fetch"){return rej(new Error("Network Error"))}else{return rej(error)}}
                 console.log(response)
                 if (!response.status){
                     if(i==3){rej(new Error("Failed to get Documents--"))}
@@ -217,7 +219,7 @@ class Client{
                     console.log("bffr")
                     this.parseDocuments(response).then(docs=>{res(docs)}).catch(error=>{rej(error)})
                     break outerLoop}}
-                }
+                }else{if(!response.status){return rej(new Error(response.message))}}
             this.parseDocuments(response).then(docs=>{res(docs)}).catch(error=>{rej(error)})           
         })
 
@@ -228,6 +230,7 @@ class Client{
     return new Promise((res,rej)=>{
         let temp = [];
     console.log("genuinely tweaking out :)")
+    console.log(response)
     const response1= response.doc.replace(/PXP.DataGridTemplates.CalculateValue/g,"\"PXP.DataGridTemplates.CalculateValue\"")
     const saftey= response1.substring(response1.indexOf('dxDataGrid(PXP.DevExpress.ExtendGridConfiguration(')+'dxDataGrid(PXP.DevExpress.ExtendGridConfiguration('.length,response1.indexOf("))",response1.indexOf("dxDataGrid(PXP.DevExpress.ExtendGridConfiguration(")));
 
@@ -251,26 +254,39 @@ const response2=JSON.parse(saftey);
 
     })}
 
-    async fetchAssignment(course){
-               const assignments=await this.getAssignments(this.parsedGrades.courses[course].loadstring)
-        const assignments2=[]
+    async getparseAssignments(course,backup=this.parsedGrades,courseN="bullshit lol",selector=null){
+        return new Promise(async(res,rej)=>{
+            this.parsedGrades=backup;
+            console.log("elite level stuffryt")
+            console.log(JSON.stringify(this.parsedGrades.courses[course]));
+                try{
+               var assignments=await this.getAssignments(this.parsedGrades.courses[course].loadstring,courseN,selector).catch((error)=>{console.log(error.message);return rej(new Error(error.message))})
+                }catch(error){console.log("FUCK FUCK FUCK JESUS FUCK");console.log(course);console.log(JSON.stringify(this.parsedGrades));console.log(error.message)}
+               const assignments2=[]
         const categories={}
+        console.log("okay here");console.log(assignments);
         console.log(assignments[0]);
         assignments[0].measureTypes.forEach((category)=>{
-            if (category.weight != 0){             categories[category.name]={'name':category.name,'weight':category.weight,
+            console.log("suck my balls wtf")
+            console.log(category)
+            if (category.weight != 0){categories[category.name]={'name':category.name,'weight':category.weight,
                 "grade":{"letter":null,"raw":0,"color":null},"points":{"earned":0,"possible":0}};
                                      }
         });
-console.log(assignments[1].responseData.data[0]);
+        console.log("damn thats brazy");
+        console.log(assignments[1].responseData)
+        console.log(categories)
+if(assignments[1].responseData.data.length==0){this.parsedGrades.courses[course].assignments=[];const categories2=[];for(let category of Object.keys(categories)){categories2.push(categories[category])};this.parsedGrades.courses[course].categories=categories2}else{
     assignments[1].responseData.data.forEach((assignmentsrange)=>{
         assignmentsrange.items.forEach((item)=>{
                 const assignment={};
                 assignment.name=item.title;
-                assignment.grade={letter:letterGrade(item.calcValue),raw:item.calcValue,color:letterGradeColor(letterGrade(item.calcValue))};
-                assignment.points={earned:item.points,possible:item.pointsPossible};
+                assignment.grade={letter:letterGrade(parseFloat(item.calcValue.toString())),raw:parseFloat(item.calcValue.toString()),color:letterGradeColor(letterGrade(parseFloat(item.calcValue.toString())))};
+                assignment.points={earned:parseFloat(item.points.toString()),possible:parseFloat(item.pointsPossible.toString())};
                 assignment.date={due:item.due_date};
                 assignment.category=item.assignmentType;
-                categories[assignment.category].points.earned+=assignment.points.earned;
+                try{
+                categories[assignment.category].points.earned+=assignment.points.earned;}catch(error){console.log("sheeesh");console.log(assignment.category);console.log(assignment.name);console.log(categories);console.log(assignments)}
 categories[assignment.category].points.possible+=assignment.points.possible;
                 assignments2.push(assignment);
             }
@@ -280,81 +296,84 @@ categories[assignment.category].points.possible+=assignment.points.possible;
     categories2.push(categories[category]);                               //aslo here you'd do the colors and leter grade functions
     };
 
-
+        if (assignments[0].className.includes(this.parsedGrades.courses[course].name)){
         this.parsedGrades.courses[course].categories=categories2;
-                                                               this.parsedGrades.courses[course].assignments=assignments2;
+        this.parsedGrades.courses[course].assignments=assignments2;}
+        else{
+            this.parsedGrades.courses.forEach((tcourse,index)=>{
+                if (assignments[0].className.includes(tcourse.name)){
+                    this.parsedGrades.courses[index].categories=categories2;
+                    this.parsedGrades.courses[index].assignments=assignments2;
+                }
 
-    }
-    async getAssignments(loadstring){
-        const url2=this.domain+"/service/PXP2Communication.asmx/LoadControl";
-        const url=this.domain+"/server/GB/ClientSideData/Transfer?action=pxp.course.content.items-LoadWithOptions";
-            const data={"FriendlyName":"pxp.course.content.items","Method":"LoadWithOptions","Parameters":"{\"loadOptions\":{\"sort\":[{\"selector\":\"due_date\",\"desc\":false}],\"filter\":[[\"isDone\",\"=\",false]],\"group\":[{\"Selector\":\"Week\",\"desc\":true}],\"requireTotalCount\":true,\"userData\":{}},\"clientState\":{}}"}
-    const url3="https://md-mcps-psv.edupoint.com/server/GB/ClientSideData/Transfer?action=genericdata.classdata-GetClassData";
-            const headers={
-                 'Origin': this.domain,
-                'Referer': this.domain+'/PXP2_GradeBook.aspx?AGU=0'
-            }
-            const headers2={
-                                                                               "AGU": "0",
-                                                                               "Accept": "application/json, text/javascript, */*; q=0.01",
-                                                                               "Accept-Encoding": "gzip, deflate, br, zstd",
-                                                                               "Accept-Language": "en-US,en;q=0.9",
-                                                                               "Connection": "keep-alive",
-                                                                               "Content-Type": "application/json; charset=UTF-8",
-                                                                               "Cookie":this.cookies,
-                                                                               "Host": this.domain.substring(8),
-                                                                               "Origin":this.domain,
-                                                                               "Referer": "https://md-mcps-psv.edupoint.com/PXP2_Gradebook.aspx?AGU=0",
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0'
+            })
+        }
 
-                                                                           };
-        const data3={"FriendlyName":"genericdata.classdata","Method":"GetClassData","Parameters":"{}"};
+
+    };return res(this.parsedGrades);}
+)}
+
+    async getAssignments(loadstring,course="this doesnt need to be filled",selector=null){
+        return new Promise(async(res,rej)=>{
             const senddata=convertData1ToData2(JSON.parse(loadstring));
-        const response = await (await fetch('/api/server/',{
+            if(selector!==null){console.log("piggy");console.log(this.parsedGrades.periods[selector]);senddata.request.parameters.gradePeriodGU=this.parsedGrades.periods[selector].gu;senddata.request.parameters.markPeriodGU=this.parsedGrades.periods[selector].mgu;console.log(selector)};
+        try{
+        var response = await (await fetch(expressUrl+'/getAssignments',{
             'method':'POST',
             'headers':{'Content-Type':'application/json'},
-            'body':JSON.stringify({'senddata':senddata,'credentials':this.credentials, 'domain':this.domain,'url2':url2,'url':url,'data':data,'headers2':headers2,'url3':url3,'data3':data3,"headers":headers,'func':'getAssignments'})
-        })).json()
+            'body':JSON.stringify({'course':course,'senddata':senddata,'credentials':this.credentials, 'domain':this.domain,'cookies':this.cookies})
+        })).json()}catch(error){return rej(new Error(error.message))}
+        console.log("whatup stuffs")
+        console.log(response)
         if (response.status){
-            return(response.data);
+            return res(response.assignments);
         }
         else{
-            return new Error(response.message)
+            rej(new Error(response.message))
         }
 
-                                                                 };
+                                                                 })};
 
 
-    async getHomePageGrades(session=this.session) {
-        const response = await (await fetch('/api/server/',{
+    async getHomePageGrades(selector=null,backup=this.parsedGrades) {
+        return new Promise(async(res,rej)=>{
+        try{
+        this.parsedGrades=backup;
+        if(selector){var selection="&gradePeriodGU="+selector}else{var selection=""}
+        console.log(this.cookies)
+        console.log("wtf is going on")
+        var response = await (await fetch(expressUrl+'/getHomePageGrades',{
             'method':'POST',
             'headers':{'Content-Type':'application/json'},
-            'body':JSON.stringify({'credentials':this.credentials, 'domain':this.domain,'func':'getHomePageGrades','cookies':this.cookies})
-        })).json()
+            'body':JSON.stringify({'credentials':this.credentials, 'domain':this.domain,'cookies':this.cookies,'selector':selection})
+        })).json()}catch(error){console.log(error);return rej(new Error(error.message))}
         if (response.status){
-        return response.grades;}
+        console.log(response.grades)
+        return res(response.grades)}
         else{
-            return new Error(response.message)
+            return rej (new Error(response.message))
         }
-    }
+    })}
 
 
-    async refresh(){
+    async refresh(cookie_sourced=true){
+        console.log(this.credentials)
+        console.log(cookie_sourced);
     return new Promise(async(res,rej)=>{
         const bodyData = {
             ...(this.cookies && { 'cookies': this.cookies }),
             'credentials': this.credentials,
-            'domain': this.domain,
-            'func': 'refresh'
+            'needsDecryption':cookie_sourced,
+            'domain': this.domain
         };
         try{
         
-        var response = await (await fetch('/api/server',{
+        var response = await (await fetch(expressUrl+'/refresh',{
             'method':'POST',
             'headers':{'Content-Type':'application/json'},
             'body':JSON.stringify(bodyData)
         })).json()}
-        catch(error){console.log("TEAR OFF MY BALLS WITH A RUSTED SPOON AND FEED THEM TO ME");console.log(error);return rej(error)}
+        catch(error){console.log("TEAR OFF MY BALLS WITH A RUSTED SPOON AND FEED THEM TO ME");console.log(error.message);if(error.message=="Failed to fetch"){return rej(new Error("Network Error"))}else{return rej(error)}}
     console.log("HEY")
     if (response.status===false){
         console.log("ima get violent low key")
@@ -364,76 +383,72 @@ categories[assignment.category].points.possible+=assignment.points.possible;
         console.log("ima not get violent low key")
         console.log(this.cookies)
         console.log(response)
-        if(this.credentials.username==="151376"){rej(new Error("go to hell, luke"))}
-        else{
         this.cookies=response.cookies
-        res(this.cookies)}
+        this.credentials.password=response.encrpytedPassword;
+        res(this.cookies)
     }})}
 
         // Function to parse the raw HTML and create the ParsedGrades structure
+async getparseGrades(selector=null) {
+    return new Promise(async(res,rej)=>{
+            //also, later, much much later. Grapes social media? profiles,
+            
+                const homePageGradesHtml=await this.getHomePageGrades(selector)
+                // okay so, needed data: class name, grades [letter grade, percentage grade, grade color, room, period, weighted, teacher (name, email)]
+                let $ = jQuery('<div></div>').html(homePageGradesHtml);
 
-async getparseGrades() {
-    //the plan is to make a client class where the session object is preserved as long as possible. key functions should run an isAlive check on the session, and if its dead, run refresh code, which will consist of repeating the login and redfining the class-object session variable with the new session. credentials will be saved, potentially parsed grades
-    if (this.session == null) {
-        console.log("null session")
-        this.refresh()
-    };
+                const script = $.find("script").html();
+                const periodsData = JSON.parse(script.substring(script.indexOf("PXP.GBFocusData") + 18, script.substring(script.indexOf("PXP.GBFocusData")).indexOf(";") + script.indexOf("PXP.GBFocusData")))
+                console.log(periodsData.GradingPeriods);
+                const periods = [];
+                for (const period in periodsData.GradingPeriods) {
+                    console.log(periodsData.GradingPeriods[period])
+                    const p1 = { name: periodsData.GradingPeriods[period].Name, index: period, gu: periodsData.GradingPeriods[period].GU,mgu:periodsData.GradingPeriods[period].MarkPeriods[0].GU };
+                    periods.push(p1);
+                    if ((periodsData.GradingPeriods[period].defaultFocus == true&&selector==null)||periodsData.GradingPeriods[period].GU==selector) {
+                        console.log("well who knew")
+                        this.parsedGrades.period = p1;
+                    }
+                };
+                this.parsedGrades.periods = periods;
+                const classes = $.find('.row.gb-class-header.gb-class-row.flexbox.horizontal');
+                const courses = [];
+                // Iterate through the elements and print their HTML or text content
+                classes.each(async (index, element) => {
+                    const regex = /\s{2,}|\n+/;
+                    let listedData = jQuery(element).text().split(regex).filter(Boolean);
+                    let course = {};
+                    course.name = listedData[0].slice(2,-1);
+                    course.period = listedData[0].slice(0, 1);
+                    course.weighted = isWeighted(course.name); //isWeighted(course.name)//can properly implement luckily utilizing isWeighted, funcitonality carries over, for once
+                    course.room = listedData[3].substring(6);
+                    course.teacher = { name: listedData[1], email: listedData[1].substring(0, listedData[1].indexOf(" ")) + "." + listedData[1].substring(listedData[1].indexOf(" ") + 1) + "@mcpsmd.net" };
+                    course.loadstring = jQuery(element).find("button").attr("data-focus");
+                    const mark = $.find('.row.gb-class-row[data-guid=' + JSON.parse(course.loadstring).FocusArgs.classID + "] .mark").text();
+                    console.log("HEY");
+                    console.log(mark);
+                    course.grade = {
+                        letter: letterGrade(mark),//letterGrade(mark),
+                        raw: mark,
+                        color: letterGradeColor(letterGrade(mark))//letterGradeColor(letterGrade(mark),
+                    };
+                    course.categories = null;
+                    course.assignments = null;
+                    console.log(course);
+                    courses.push(course);
+            
+                    //console.log(course);''
+                });
+            
+                this.parsedGrades.courses = courses;
+                this.parsedGrades.gpa = 0; //test
+                this.parsedGrades.wgpa = 0; //test
+                console.log(JSON.stringify(this.parsedGrades));
+                res(this.parsedGrades)
+            })
 
-    //also, later, much much later. Grapes social media? profiles,
+        }
 
-    // okay so, needed data: class name, grades [letter grade, percentage grade, grade color, room, period, weighted, teacher (name, email)]
-    let homePageGradesHtml = await this.getHomePageGrades();
-    let $ = jQuery('<div></div>').html(homePageGradesHtml);
-
-    const script = $.find("script").html();
-    const periodsData = JSON.parse(script.substring(script.indexOf("PXP.GBFocusData") + 18, script.substring(script.indexOf("PXP.GBFocusData")).indexOf(";") + script.indexOf("PXP.GBFocusData")))
-    const periodData = JSON.parse(script.substring(script.indexOf("PXP.GBCurrentFocus") + 21, script.substring(script.indexOf("PXP.GBCurrentFocus")).indexOf(";") + script.indexOf("PXP.GBCurrentFocus")))
-    //this.parsedGrades.period = periodData
-    console.log(periodsData.GradingPeriods);
-    const periods = [];
-    for (const period in periodsData.GradingPeriods) {
-        console.log(periodsData.GradingPeriods[period])
-        const p1 = { name: periodsData.GradingPeriods[period].Name, index: period, gu: periodsData.GradingPeriods[period].GU };
-        periods.push(p1);
-        if (periodsData.GradingPeriods[period].defaultFocus == true) {
-            this.parsedGrades.period = p1;
-        };
-    };
-    this.parsedGrades.periods = periods;
-    const classes = $.find('.row.gb-class-header.gb-class-row.flexbox.horizontal');
-    const courses = [];
-    // Iterate through the elements and print their HTML or text content
-    classes.each(async (index, element) => {
-        const regex = /\s{2,}|\n+/;
-        let listedData = jQuery(element).text().split(regex).filter(Boolean);
-        let course = {};
-        course.name = listedData[0];
-        course.period = listedData[0].slice(0, 1);
-        course.weighted = isWeighted(course.name); //isWeighted(course.name)//can properly implement luckily utilizing isWeighted, funcitonality carries over, for once
-        course.room = listedData[3].substring(6);
-        course.teacher = { name: listedData[1], email: listedData[1].substring(0, listedData[1].indexOf(" ")) + "." + listedData[1].substring(listedData[1].indexOf(" ") + 1) + "@mcpsmd.net" };
-        course.loadstring = jQuery(element).find("button").attr("data-focus");
-        const mark = $.find('.row.gb-class-row[data-guid=' + JSON.parse(course.loadstring).FocusArgs.classID + "] .score").text();
-        console.log("HEY");
-        console.log(mark);
-        course.grade = {
-            letter: letterGrade(mark),//letterGrade(mark),
-            raw: mark,
-            color: letterGradeColor(mark)//letterGradeColor(letterGrade(mark),
-        };
-        course.categories = null;
-        course.assignments = null;
-        console.log(course);
-        courses.push(course);
-
-        //console.log(course);''
-    });
-
-    this.parsedGrades.courses = courses;
-    this.parsedGrades.gpa = 0; //test
-    this.parsedGrades.wgpa = 0; //test
-    console.log(JSON.stringify(this.parsedGrades));
-}
 // could low key slice string to only include after <div id="gradebook-content">
 //console.log(parseGradeData(grades));
 }
