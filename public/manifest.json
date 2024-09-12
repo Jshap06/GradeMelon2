@@ -1,7 +1,7 @@
 {
 	"display": "standalone",
 	"scope": "/",
-	"start_url": "/login",
+	"start_url": "/",
 	"name": "Grade Melon",
 	"short_name": "Grade Melon",
 	"description": "A third-party app that lets students view and calculate their grades using Synergy SIS.",
