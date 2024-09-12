@@ -46,7 +46,7 @@ function MyApp({ Component, pageProps }) {
 			if (save) {
 				localStorage.setItem("remember", "true");
 				localStorage.setItem("username", username);
-				Cookies.set('password',student.credentials.password,{expires:10000,secure:false,sameSite:"Lax"})
+				Cookies.set('password',student.credentials.password,{expires:7,secure:false,sameSite:"Lax"})
 				localStorage.setItem("districtURL", districtURL);
 			} else {
 				localStorage.setItem("remember", "false");

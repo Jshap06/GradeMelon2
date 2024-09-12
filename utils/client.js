@@ -283,7 +283,7 @@ if(assignments[1].responseData.data.length==0){this.parsedGrades.courses[course]
                 assignment.name=item.title;
                 assignment.grade={letter:letterGrade(parseFloat(item.calcValue.toString())),raw:parseFloat(item.calcValue.toString()),color:letterGradeColor(letterGrade(parseFloat(item.calcValue.toString())))};
                 assignment.points={earned:parseFloat(item.points.toString()),possible:parseFloat(item.pointsPossible.toString())};
-                assignment.date={due:item.due_date};
+                assignment.date={due:new Date(item.due_date)};
                 assignment.category=item.assignmentType;
                 try{
                 categories[assignment.category].points.earned+=assignment.points.earned;}catch(error){console.log("sheeesh");console.log(assignment.category);console.log(assignment.name);console.log(categories);console.log(assignments)}
@@ -350,7 +350,8 @@ categories[assignment.category].points.possible+=assignment.points.possible;
         if (response.status){
         console.log(response.grades)
         return res(response.grades)}
-        else{
+        else if(response.message=="Authentication Cookies Expired"){
+            await this.refresh(true).catch(rej1=>{return rej(rej1)});
             try{
             var response = await (await fetch(expressUrl+'/getHomePageGrades',{
                 'method':'POST',
@@ -360,6 +361,7 @@ categories[assignment.category].points.possible+=assignment.points.possible;
             if(response.status){
                 return res(response.grades)
             }
+            else{return rej(new Error (response.message))}
         }
     })}
 
@@ -401,7 +403,7 @@ async getparseGrades(selector=null) {
     return new Promise(async(res,rej)=>{
             //also, later, much much later. Grapes social media? profiles,
             
-                const homePageGradesHtml=await this.getHomePageGrades(selector)
+                const homePageGradesHtml=await this.getHomePageGrades(selector).catch(error=>{return rej(error)});
                 // okay so, needed data: class name, grades [letter grade, percentage grade, grade color, room, period, weighted, teacher (name, email)]
                 let $ = jQuery('<div></div>').html(homePageGradesHtml);
 

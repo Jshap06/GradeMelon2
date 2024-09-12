@@ -12,8 +12,7 @@ interface Assignment {
 		possible: number;
 	};
 	date: {
-		due: string;
-		assigned: string;
+		due: Date;
 	};
 	category: string;
 }
@@ -149,31 +148,17 @@ const parsePoints = (points: string) => {
 	};
 };
 
-const parseDate = ({ start, end }: { start: Date; end: Date }): string => {
-	let startDate = new Date(start);
-	let endDate = new Date(end);
+function formatDate(date: Date): string {
+	if(typeof date =="undefined"){return}
+    const options:Intl.DateTimeFormatOptions = { 
+        year: 'numeric', 
+        month: 'numeric', 
+        day: 'numeric'
+    };
+    return date.toLocaleString('en-US', options);
+}
 
-	//days left to the due date
-	let daysLeft = Math.ceil(
-		(endDate.getTime() - new Date().getTime()) / 86400000
-	);
-	let daysToStart = Math.floor(
-		(startDate.getTime() - new Date().getTime()) / 86400000
-	);
-	let daysAgo = Math.floor(
-		(new Date().getTime() - endDate.getTime()) / 86400000
-	);
 
-	if (daysLeft > 0 && daysToStart < 0) {
-		return `ends in ${daysLeft} day${daysLeft > 1 ? "s" : ""}`;
-	} else if (daysToStart > 0) {
-		return `starts in ${daysToStart} day${daysToStart > 1 ? "s" : ""}`;
-	} else if (daysAgo > 0) {
-		return `ended ${daysAgo} day${daysAgo > 1 ? "s" : ""} ago`;
-	} else if (daysAgo === 0) {
-		return "ends today";
-	}
-};
 
 const parseAssignmentName = (name: string): string => {
 	return new DOMParser().parseFromString(
@@ -347,8 +332,7 @@ const addAssignment = (course: Course): Course => {
 			possible: 0,
 		},
 		date: {
-			due: "",
-			assigned: "",
+			due:new Date()
 		},
 		category: course.categories.length ? course.categories[0].name : "N/A",
 	});
@@ -449,6 +433,7 @@ export {
 	updateGPA,
 	isWeighted,
 	letterGrade,
-	letterGradeColor
+	letterGradeColor,
+	formatDate
 };
 export type { Grades, Assignment, Course };
