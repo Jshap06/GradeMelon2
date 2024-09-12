@@ -42,18 +42,7 @@ export default function MobileBar() {
 						<AiOutlineBook className="h-full" size="1.2rem" />
 					</Link>
 				</li>
-				<li className="w-full">
-					<Link
-						href="/attendance"
-						className={`flex justify-center p-4 w-full bg-${
-							router.pathname === "/attendance" ? "gray-200" : "white"
-						} hover:text-gray-700 hover:bg-gray-200 focus:outline-none dark:hover:text-white dark:bg-gray-${
-							router.pathname === "/attendance" ? 700 : 800
-						} dark:hover:bg-gray-700`}
-					>
-						<AiOutlineCalendar className="h-full" size="1.2rem" />
-					</Link>
-				</li>
+				
 				<li className="w-full">
 					<Link
 						href="/documents"
