@@ -52,7 +52,7 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 								>
 									Check out how &rarr;
 								</Link>
-								  <p></p>Want to contribute?</span></p>
+								  <p>Want to contribute?</p>
 								<Link
 									onClick={() => setAdvertisePWA(false)}
 									className="underline pl-1"
