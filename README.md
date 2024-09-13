@@ -14,7 +14,7 @@ Grade Melon was fully created from reverse engineering StudentVUE's front end, b
 ## Quick Start
 Clone the repository to your local machine.
 ```
-git clone https://github.com/tinuh/grade-melon && cd grade-melon
+git clone https://github.com/Themightypotato/GradeMelon2.git && cd grade-melon
 ```
 Install dependencies
 ```
