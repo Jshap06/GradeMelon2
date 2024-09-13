@@ -52,6 +52,16 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 								>
 									Check out how &rarr;
 								</Link>
+								Want to contribute?
+								<Link
+									onClick={() => setAdvertisePWA(false)}
+									className="underline pl-1"
+									href="https://discord.gg/nwRs8WcQGc"
+								>
+									Join the Discord! &rarr;
+								</Link>
+
+								
 							</span>
 							<button className="" onClick={closeAdvertisePWA}>
 								<RiCloseCircleLine className="inline-block" size="1.1rem" />
