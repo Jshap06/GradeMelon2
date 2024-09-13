@@ -29,4 +29,5 @@ Mobile specific PWA testing can be tested by running the development server and 
 
 🔼 [Back to Top](#readme)
 
-Shoutout Tinu Vanapamula, creator of the original GradeMelon
+
+<p1>Shoutout Tinu Vanapamula, creator of the original GradeMelon</p1>
