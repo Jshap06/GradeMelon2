@@ -44,7 +44,7 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 					<div className="w-full bg-primary-600 px-4 py-3 text-white">
 						<p className="text-center text-sm font-medium flex gap-2 justify-center">
 							<span>
-								Want to use Grade Melon as an app?
+								Want to use Grade Melon as an app?  
 								<Link
 									onClick={() => setAdvertisePWA(false)}
 									className="underline pl-1"
@@ -52,7 +52,7 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 								>
 									Check out how &rarr;
 								</Link>
-								Want to contribute?
+								  Want to contribute?
 								<Link
 									onClick={() => setAdvertisePWA(false)}
 									className="underline pl-1"
