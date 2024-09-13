@@ -20,6 +20,7 @@ const DarkModeToggle = dynamic(() => import('../components/Toggle'), {
 export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 	const [dropdown, setDropdown] = useState(false);
 	const [advertisePWA, setAdvertisePWA] = useState(false);
+	const [advertiseDiscord, setAdvertiseDiscord] = useState(false);
 
 	useEffect(() => {
 		if (!window.matchMedia("(display-mode: standalone)").matches) {
@@ -31,16 +32,54 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 		}
 	}, []);
 
+	useEffect(() => {
+			if (localStorage.getItem("advertiseDiscorf") === null) {
+				setAdvertisePWA(true);
+				//localStorage.setItem("advertisePWA", "true");
+			}
+		
+	}, []);
+
 	const closeAdvertisePWA = () => {
 		setAdvertisePWA(false);
 		localStorage.setItem("advertisePWA", "false");
 	};
 
+	const closeAdvertiseDiscord = () => {
+		setAdvertiseDiscord(false);
+		localStorage.setItem("advertiseDiscord", "false");
+	};
+	
 	return (
 		<div>
+			{advertiseDiscord && client && <div className="h-16 announcment:h-10"/>}
+			{advertiseDiscord && client &&(
+			<div className="w-full bg-primary-600 px-4 py-3 text-white">
+						<p className="text-center text-sm font-medium flex gap-2 justify-center">
+							<span>
+								Want to contribute?
+								<Link
+									onClick={() => setAdvertiseDiscord(false)}
+									className="underline pl-1"
+									href="https://discord.gg/nwRs8WcQGc"
+								>
+									Join the Discord! &rarr;
+								</Link> 
+						
+							
+					
+
+								
+							</span>
+							<button className="" onClick={closeAdvertiseDiscord}>
+								<RiCloseCircleLine className="inline-block" size="1.1rem" />
+							</button>
+						</p>
+					</div>
 			{advertisePWA && client && <div className="h-16 announcement:h-10" />}
 			<div className="fixed top-0 w-full z-10">
 				{advertisePWA && client && (
+			<div>
 					<div className="w-full bg-primary-600 px-4 py-3 text-white">
 						<p className="text-center text-sm font-medium flex gap-2 justify-center">
 							<span>
@@ -52,14 +91,8 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 								>
 									Check out how &rarr;
 								</Link>
-								  <p>Want to contribute?</p>
-								<Link
-									onClick={() => setAdvertisePWA(false)}
-									className="underline pl-1"
-									href="https://discord.gg/nwRs8WcQGc"
-								>
-									Join the Discord! &rarr;
-								</Link>
+							
+								
 
 								
 							</span>
@@ -68,6 +101,9 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 							</button>
 						</p>
 					</div>
+				
+			
+				</div>
 				)}
 				<nav className="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-800">
 					<div className=" flex flex-wrap justify-between items-center">
