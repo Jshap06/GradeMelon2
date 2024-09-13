@@ -276,7 +276,7 @@ const response2=JSON.parse(saftey);
         console.log("damn thats brazy");
         console.log(assignments[1].responseData)
         console.log(categories)
-if(assignments[1].responseData.data.length==0){this.parsedGrades.courses[course].assignments=[];const categories2=[];for(let category of Object.keys(categories)){categories2.push(categories[category])};this.parsedGrades.courses[course].categories=categories2}else{
+if(assignments[1].responseData.data.length==0){this.parsedGrades.courses[course].assignments=[];const categories2=[];for(let category of Object.keys(categories)){categories[category].grade.raw=(categories[category].points.earned/categories[category].points.possible)*100;categories[category].grade.color=letterGradeColor(letterGrade((categories[category].points.earned/categories[category].points.possible)*100));categories2.push(categories[category])};this.parsedGrades.courses[course].categories=categories2}else{
     assignments[1].responseData.data.forEach((assignmentsrange)=>{
         assignmentsrange.items.forEach((item)=>{
                 const assignment={};
@@ -291,9 +291,9 @@ categories[assignment.category].points.possible+=assignment.points.possible;
                 assignments2.push(assignment);
             }
             )});
-    const categories2=[];
+    const categories2=[];assignments[0]
     for (let category of Object.keys(categories)){     categories[category].grade.raw=(categories[category].points.earned/categories[category].points.possible)*100;categories[category].grade.color=letterGradeColor(letterGrade((categories[category].points.earned/categories[category].points.possible)*100));
-    categories2.push(categories[category]);                               //aslo here you'd do the colors and leter grade functions
+        categories2.push(categories[category]);                               //aslo here you'd do the colors and leter grade functions
     };
 
         if (assignments[0].className.includes(this.parsedGrades.courses[course].name)){

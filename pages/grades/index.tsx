@@ -83,7 +83,9 @@ export default function Grades({
 	useEffect(()=>{
 		async function asyncDoer(){
 			for(const [index,value] of grades.courses.entries()){
-				await client.getparseAssignments(index,grades,"",period).then(newgrades=>{grades.courses[index]=newgrades.courses[index]}).catch(error=>createError(error))
+				await client.getparseAssignments(index,grades,"",period).then(newgrades=>{
+					setGrades(newgrades)
+				}).catch(error=>createError(error))
 			}
 		}
 		if(grades&&client&&!grades2){

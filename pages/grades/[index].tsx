@@ -48,7 +48,11 @@ export default function Grades({
 	const { index }: { index?: string } = router.query;
 	var course = grades?.courses[parseInt(index as string)];
 	try{
-	var [loading, setLoading] = useState((!grades)||(course.assignments===null ? true : false));}catch{console.log("wtf");console.log(course)}
+		console.log("holy hacks batman")
+		console.log(JSON.stringify(course));
+		console.log(JSON.stringify(grades));
+	var [loading, setLoading] = useState((!grades)||(course.assignments===null ? true : false));
+}catch{console.log("wtf");console.log(course)}
 	const [showModal, setShowModal] = useState(false);
 	const [modalDetails, setModalDetails] = useState(0);
 	const [modalType, setModalType] = useState("assignment");
@@ -57,6 +61,7 @@ export default function Grades({
 
     console.log("jackass listen up okay?")
     console.log(course)
+	console.log(loading)
 
 	const updateGrade = (val: string, assignmentId: number, update: string) => {
 		let temp = grades;
@@ -106,10 +111,16 @@ export default function Grades({
 	};
 
 	const update = (p: number) => {
-		async function asyncDoer(p){
-			grades.courses.forEach((value,index)=>{grades.courses[index].assignments=null;grades.courses[index].categories=null})
-			await client.getparseAssignments(parseInt(index as string),grades,"",p).then(newgrades=>{grades.courses[parseInt(index as string)]=newgrades.courses[parseInt(index as string)];setPeriod(p);
-				setLoading(false);}).catch(error=>{createError(error)})
+		async function asyncDoer(p,grades){
+			await client.getparseAssignments(parseInt(index as string),grades,"",p).then(newgrades=>{console.log("skullduggery");console.log(JSON.stringify(grades));grades.courses[parseInt(index as string)]=newgrades.courses[parseInt(index as string)];setPeriod(p);
+}).catch(error=>{createError(error)});
+setGrades(grades); //since setting state is synchronus in function, but async
+//in its effect, asyncDoer runs, and prob anything on this render runs, with the old value of
+//grades, so ig I just have to pass it in , and since it's no longer mutating the 
+//most recent versino, i need to set it with setGrades to push it, prob shouldn't have ever been
+//mutating state in the first place tbh
+
+setLoading(false);
 			console.log("AHH FUCK SHIT")
 			for(const [index1,value] of grades.courses.entries()){
 				if(index1!=parseInt(index as string)){
@@ -119,7 +130,7 @@ export default function Grades({
 		}
 		console.log(p);
 		setLoading(true);
-		client.getparseGrades(grades.periods[p].gu).then(res=>{setGrades(res);asyncDoer(p)
+		client.getparseGrades(grades.periods[p].gu).then(async(res)=>{setGrades(res);asyncDoer(p,res)
 			}).catch(error=>{createError(error.message)})
 
 	};
@@ -147,13 +158,13 @@ export default function Grades({
 		let results = genTable(course, optimizeProps.desiredGrade, points);
 		setSolution(results);
 	};
-
+//
     useEffect(()=>{
 		console.log("heres the state of things")
         if(course.assignments==null){
-            client.getparseAssignments(index).then(newgrades=>{console.log(newgrades);grades.courses[index]=newgrades.courses[index];course = grades?.courses[parseInt(index as string)];setLoading(false)}).catch(error=>{console.log("you have got to be kidding me");createError(error)})
+            client.getparseAssignments(index).then(newgrades=>{console.log(newgrades);setGrades(newgrades);setLoading(false)}).catch(error=>{console.log("you have got to be kidding me");createError(error)})
         }
-        else{console.log("haha");setLoading(false)}
+        else{console.log("haha");}
 
     },[client])
 	return (
