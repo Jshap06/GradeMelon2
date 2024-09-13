@@ -75,7 +75,7 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 								<RiCloseCircleLine className="inline-block" size="1.1rem" />
 							</button>
 						</p>
-					</div>
+					</div>)}
 			{advertisePWA && client && <div className="h-16 announcement:h-10" />}
 			<div className="fixed top-0 w-full z-10">
 				{advertisePWA && client && (
