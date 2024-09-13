@@ -28,3 +28,5 @@ npm run dev
 Mobile specific PWA testing can be tested by running the development server and accessing the website on your local network. For more information, check out [this](https://stackoverflow.com/questions/19482164/how-can-i-access-localhost-from-another-computer-in-the-same-network).
 
 🔼 [Back to Top](#readme)
+
+Shoutout Tinu Vanapamula, creator of the original GradeMelon
