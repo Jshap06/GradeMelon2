@@ -14,7 +14,7 @@ Grade Melon was fully created from reverse engineering StudentVUE's front end, b
 ## Quick Start
 Clone the repository to your local machine.
 ```
-git clone https://github.com/tinuh/grade-melon && cd grade-melon
+git clone https://github.com/Themightypotato/GradeMelon2.git && cd grade-melon
 ```
 Install dependencies
 ```
@@ -28,3 +28,6 @@ npm run dev
 Mobile specific PWA testing can be tested by running the development server and accessing the website on your local network. For more information, check out [this](https://stackoverflow.com/questions/19482164/how-can-i-access-localhost-from-another-computer-in-the-same-network).
 
 🔼 [Back to Top](#readme)
+
+<br>
+<p1>Shoutout Tinu Vanapamula, creator of the original GradeMelon</p1>
