@@ -124,9 +124,15 @@ export default function Grades({
 		//mutating state in the first place tbh
 		setLoading(false);
 					console.log("AHH FUCK SHIT")
-					for(const [index1,value] of grades.courses.entries()){
+					for(const [index1,value] of client.parsedGrades.courses.entries()){
 						if(index1!=parseInt(index as string)){
-						await client.getparseAssignments(index1,grades,"",p).then(newgrades=>{grades.courses[index1]=newgrades.courses[index1]}).catch(error=>createError(error))
+							console.log("pls")
+							console.log(index1)
+						await client.getparseAssignments(index1,undefined,"",p).then(newgrades=>{
+							//grades.courses[index1]=newgrades.courses[index1]
+							setGrades(newgrades);
+
+						}).catch(error=>createError(error))
 						}
 					}
 			}).catch(error=>{createError(error.message)})
