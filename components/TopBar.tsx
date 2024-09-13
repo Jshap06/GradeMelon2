@@ -114,7 +114,7 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 								alt="Grade Melon Logo"
 							/>
 							<span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-								Grade Melon
+								Grade Melon--Beta
 							</span>
 						</Link>
 						<div className="flex items-center md:order-2 gap-2">
