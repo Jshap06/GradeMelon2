@@ -47,12 +47,11 @@ export default function Grades({
 	const router = useRouter();
 	const { index }: { index?: string } = router.query;
 	var course = grades?.courses[parseInt(index as string)];
-	try{
+	
 		console.log("holy hacks batman")
 		console.log(JSON.stringify(course));
 		console.log(JSON.stringify(grades));
-	var [loading, setLoading] = useState((!grades)||(course.assignments===null ? true : false));
-}catch{console.log("wtf");console.log(course)}
+	var [loading, setLoading] = useState((!grades)||(course?.assignments===null ? true : false));
 	const [showModal, setShowModal] = useState(false);
 	const [modalDetails, setModalDetails] = useState(0);
 	const [modalType, setModalType] = useState("assignment");
@@ -164,7 +163,7 @@ setLoading(false);
         if(course.assignments==null){
             client.getparseAssignments(index).then(newgrades=>{console.log(newgrades);setGrades(newgrades);setLoading(false)}).catch(error=>{console.log("you have got to be kidding me");createError(error)})
         }
-        else{console.log("haha");}
+        else{console.log("haha");setLoading(false)}
 
     },[client])
 	return (
