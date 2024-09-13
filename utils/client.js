@@ -296,18 +296,8 @@ categories[assignment.category].points.possible+=assignment.points.possible;
         categories2.push(categories[category]);                               //aslo here you'd do the colors and leter grade functions
     };
 
-        if (assignments[0].className.includes(this.parsedGrades.courses[course].name)){
         this.parsedGrades.courses[course].categories=categories2;
-        this.parsedGrades.courses[course].assignments=assignments2;}
-        else{
-            this.parsedGrades.courses.forEach((tcourse,index)=>{
-                if (assignments[0].className.includes(tcourse.name)){
-                    this.parsedGrades.courses[index].categories=categories2;
-                    this.parsedGrades.courses[index].assignments=assignments2;
-                }
-
-            })
-        }
+        this.parsedGrades.courses[course].assignments=assignments2;
 
 
     };return res(this.parsedGrades);}
@@ -328,9 +318,19 @@ categories[assignment.category].points.possible+=assignment.points.possible;
         if (response.status){
             return res(response.assignments);
         }
-        else{
-            rej(new Error(response.message))
-        }
+        else if(response.message.includes("Internal Server Error")){
+            await refresh(true);
+            try{
+                var response = await (await fetch(expressUrl+'/getAssignments',{
+                    'method':'POST',
+                    'headers':{'Content-Type':'application/json'},
+                    'body':JSON.stringify({'course':course,'senddata':senddata,'credentials':this.credentials, 'domain':this.domain,'cookies':this.cookies})
+                })).json()}catch(error){return rej(new Error(error.message))}
+            if(response.status){
+                return res(response.assignments)
+            }else{
+            rej(new Error(response.message))}}
+        
 
                                                                  })};
 

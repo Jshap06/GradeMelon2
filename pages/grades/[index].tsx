@@ -51,7 +51,8 @@ export default function Grades({
 		console.log("holy hacks batman")
 		console.log(JSON.stringify(course));
 		console.log(JSON.stringify(grades));
-	var [loading, setLoading] = useState((!grades)||(course?.assignments===null ? true : false));
+		console.log((!grades)||(course?.assignments===null ? true : false))
+	const [loading, setLoading] = useState((!grades)||(course?.assignments===null ? true : false));
 	const [showModal, setShowModal] = useState(false);
 	const [modalDetails, setModalDetails] = useState(0);
 	const [modalType, setModalType] = useState("assignment");
@@ -110,26 +111,24 @@ export default function Grades({
 	};
 
 	const update = (p: number) => {
-		async function asyncDoer(p,grades){
-			await client.getparseAssignments(parseInt(index as string),grades,"",p).then(newgrades=>{console.log("skullduggery");console.log(JSON.stringify(grades));grades.courses[parseInt(index as string)]=newgrades.courses[parseInt(index as string)];setPeriod(p);
-}).catch(error=>{createError(error)});
-setGrades(grades); //since setting state is synchronus in function, but async
-//in its effect, asyncDoer runs, and prob anything on this render runs, with the old value of
-//grades, so ig I just have to pass it in , and since it's no longer mutating the 
-//most recent versino, i need to set it with setGrades to push it, prob shouldn't have ever been
-//mutating state in the first place tbh
-
-setLoading(false);
-			console.log("AHH FUCK SHIT")
-			for(const [index1,value] of grades.courses.entries()){
-				if(index1!=parseInt(index as string)){
-				await client.getparseAssignments(index1,grades,"",p).then(newgrades=>{grades.courses[index1]=newgrades.courses[index1]}).catch(error=>createError(error))
-				}
-			}
-		}
 		console.log(p);
 		setLoading(true);
-		client.getparseGrades(grades.periods[p].gu).then(async(res)=>{setGrades(res);asyncDoer(p,res)
+		client.getparseGrades(grades.periods[p].gu).then(async(res)=>{
+			
+		setGrades(res);	await client.getparseAssignments(parseInt(index as string),grades,"",p).then(newgrades=>{console.log("skullduggery");console.log(JSON.stringify(grades));grades.courses[parseInt(index as string)]=newgrades.courses[parseInt(index as string)];setPeriod(p);
+		}).catch(error=>{createError(error)});
+		setGrades(grades); //since setting state is synchronus in function, but async
+		//in its effect, asyncDoer runs, and prob anything on this render runs, with the old value of
+		//grades, so ig I just have to pass it in , and since it's no longer mutating the 
+		//most recent versino, i need to set it with setGrades to push it, prob shouldn't have ever been
+		//mutating state in the first place tbh
+		setLoading(false);
+					console.log("AHH FUCK SHIT")
+					for(const [index1,value] of grades.courses.entries()){
+						if(index1!=parseInt(index as string)){
+						await client.getparseAssignments(index1,grades,"",p).then(newgrades=>{grades.courses[index1]=newgrades.courses[index1]}).catch(error=>createError(error))
+						}
+					}
 			}).catch(error=>{createError(error.message)})
 
 	};
@@ -160,10 +159,11 @@ setLoading(false);
 //
     useEffect(()=>{
 		console.log("heres the state of things")
-        if(course.assignments==null){
+		if(!grades){router.push("/grades")}
+        if(course?.assignments==null&&course){
             client.getparseAssignments(index).then(newgrades=>{console.log(newgrades);setGrades(newgrades);setLoading(false)}).catch(error=>{console.log("you have got to be kidding me");createError(error)})
         }
-        else{console.log("haha");setLoading(false)}
+        else if(course?.assignments!==null&&course?.assignments!==undefined){console.log("haha");setLoading(false)}
 
     },[client])
 	return (

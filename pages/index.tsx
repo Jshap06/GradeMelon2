@@ -18,11 +18,13 @@ interface HomeProps {
 export default function Home({ client }: HomeProps) {
 	const router = useRouter();
 
-	useEffect(() => {
-		if (localStorage.getItem("remember") === "true" || client) {
-			router.push("/login");
+
+	useEffect(()=>{
+		if(!client){
+			router.push("/login")
 		}
-	}, []);
+
+	},[])
 
 	const features = [
 		{
@@ -204,7 +206,7 @@ export default function Home({ client }: HomeProps) {
 						animate={{ x: 0, opacity: 1 }}
 						transition={{ delay: 1.3, duration: 0.5 }}
 					>
-						<a href="https://github.com/tinuh/grade-melon" target="blank">
+						<a href="https://github.com/Themightypotato/GradeMelon2/" target="blank">
 							<button className="focus:outline-none text-white bg-primary-600 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2">
 								<div className="flex gap-2 items-center">
 									<FaGithub size={"1.3rem"} /> Github Repository
@@ -275,14 +277,14 @@ export default function Home({ client }: HomeProps) {
 				If you have bug reports/suggestions, feel free to contact us by sending
 				an email!
 			</motion.p>
-			<Link href="mailto:tinu@grademelon.com">
+			<Link href="mailto:support@grademelon.org">
 				<motion.p
 					initial={{ x: 0, opacity: 0 }}
 					animate={{ x: 0, opacity: 1 }}
 					transition={{ delay: 1.9, duration: 0.5 }}
 					className="py-3 dark:text-white font-bold flex gap-2 items-center w-fit md:w-1/2"
 				>
-					<HiOutlineMail size="1.3rem" /> tinu@grademelon.com
+					<HiOutlineMail size="1.3rem" /> support@grademelon.org
 				</motion.p>
 			</Link>
 		</div>
