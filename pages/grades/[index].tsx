@@ -114,10 +114,10 @@ export default function Grades({
 		console.log(p);
 		setLoading(true);
 		client.getparseGrades(grades.periods[p].gu).then(async(res)=>{
-			
-		setGrades(res);	await client.getparseAssignments(parseInt(index as string),grades,"",p).then(newgrades=>{console.log("skullduggery");console.log(JSON.stringify(grades));grades.courses[parseInt(index as string)]=newgrades.courses[parseInt(index as string)];setPeriod(p);
+		console.log("high key confused")
+		setGrades(res);	await client.getparseAssignments(parseInt(index as string),res,"",p).then(newgrades=>{console.log("skullduggery");console.log(JSON.stringify(grades));setGrades(newgrades);setPeriod(p);
 		}).catch(error=>{createError(error)});
-		setGrades(grades); //since setting state is synchronus in function, but async
+		 //since setting state is synchronus in function, but async
 		//in its effect, asyncDoer runs, and prob anything on this render runs, with the old value of
 		//grades, so ig I just have to pass it in , and since it's no longer mutating the 
 		//most recent versino, i need to set it with setGrades to push it, prob shouldn't have ever been
