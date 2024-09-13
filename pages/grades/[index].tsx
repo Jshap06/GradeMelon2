@@ -107,9 +107,9 @@ export default function Grades({
 
 	const update = (p: number) => {
 		async function asyncDoer(p){
-			grades.courses.forEach((value,index)=>{grades.courses[index].assignments=null;grades.courses[index].categories=null})
 			await client.getparseAssignments(parseInt(index as string),grades,"",p).then(newgrades=>{grades.courses[parseInt(index as string)]=newgrades.courses[parseInt(index as string)];setPeriod(p);
-				setLoading(false);}).catch(error=>{createError(error)})
+}).catch(error=>{createError(error)});
+			setLoading(false);
 			console.log("AHH FUCK SHIT")
 			for(const [index1,value] of grades.courses.entries()){
 				if(index1!=parseInt(index as string)){
