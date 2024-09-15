@@ -25,15 +25,15 @@ const noShowNav = ["/login", "/", "/privacy", "/letter"];
 
 function MyApp({ Component, pageProps }) {
 	const router = useRouter();
-	const [districtURL, setDistrictURL] = useState(Cookies.get('districtUrl') ? Cookies.get('districtUrl') : "https://md-mcps-psv.edupoint.com");
+	const [districtURL, setDistrictURL] = useState<string>(Cookies.get('districtUrl') ? Cookies.get('districtUrl') : "https://md-mcps-psv.edupoint.com");
 	const [client, setClient] = useState(undefined);
 	const [studentInfo, setStudentInfo] = useState(undefined);
 	const [toasts, setToasts] = useState<Toast[]>([]);
 	const [grades, setGrades] = useState<Grades>();
 	const [grades2,setGrades2] = useState(undefined);
 	const [period, setPeriod] = useState<number>();
-	const [loading, setLoading] = useState(false);
-	const [reRender,setreRender]=useState(false);
+	const [loading, setLoading] = useState<Boolean>(false);
+	const [reRender,setreRender]=useState<Boolean>(false);
 	const { width } = useWindowSize();
 	const isMediumOrLarger = width >= 768;
 
@@ -48,7 +48,6 @@ function MyApp({ Component, pageProps }) {
 				localStorage.setItem("username", username);
 				Cookies.set('password',student.credentials.password,{expires:7,secure:false,sameSite:"Lax"})
 				Cookies.set('districtUrl',student.domain,{expiress:7,secure:false,sameSite:"Lax"})
-				localStorage.setItem("districtURL", districtURL);
 			} else {
 				localStorage.setItem("remember", "false");
 				Cookies.remove('password');
@@ -119,16 +118,6 @@ function MyApp({ Component, pageProps }) {
 				crossOrigin="anonymous"
 				strategy="beforeInteractive"
 			/>
-				<Script
-					defer
-					data-domain="grademelon.com"
-					src="https://stats.tinu.tech/js/plausible.js"
-				></Script>
-				<Script
-					defer
-					src="https://static.cloudflareinsights.com/beacon.min.js"
-					data-cf-beacon='{"token": "c01b4332f8c346bdbf9df1938384019b"}'
-				></Script>
 			<div className="absolute p-5 z-20">
 				{toasts.map(({ title, type }, i) => (
 					<div className="mb-5 z-50" key={i}>
