@@ -45,7 +45,7 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 
 
 	useEffect(() => {
-		if (/Instagram/.test(navigator.userAgent) === true) {
+		if (navigator.userAgent.includes('Instagram') === true) {
 			setAdvertiseBrowser(true);
 			
 		}
@@ -122,7 +122,7 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 						</p>
 					</div>)}
 					
-					{advertiseBrowser && !closed && client &&(
+					{advertiseBrowser && !closed && (
 			<div className="w-full bg-primary-600 px-4 py-3 text-white relative y-0">
 						<p className="text-center text-sm font-medium flex gap-2 justify-center">
 							<span>

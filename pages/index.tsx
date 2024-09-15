@@ -44,12 +44,7 @@ export default function Home({ client }: HomeProps) {
 			icon: <AiOutlineCalendar size={30} />,
 			description: "View your schedule for all the terms in a year.",
 		},
-		{
-			name: "Check your Attendance",
-			icon: <AiOutlineOrderedList size={30} />,
-			description:
-				"Check if you were tardy or absent and view totals per period in a bar graph.",
-		},
+		
 		{
 			name: "View Documents",
 			icon: <IoDocumentTextOutline size={30} />,
