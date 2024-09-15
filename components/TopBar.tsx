@@ -126,7 +126,7 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 			<div className="w-full bg-primary-600 px-4 py-3 text-white relative y-0">
 						<p className="text-center text-sm font-medium flex gap-2 justify-center">
 							<span>
-								You're viewing in Instagram! 
+								You&apos;re viewing in Instagram!
 								<p
 									onClick={() => setClosed(true)}
 									className="underline pl-1"
