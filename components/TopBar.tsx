@@ -62,9 +62,7 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 		localStorage.setItem("advertiseDiscord", "false");
 	};
 
-	const closeAdvertiseBrowser = () => {
-		setClosed(true);
-	};
+
 	
 	return (
 		<div>
@@ -128,7 +126,6 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 							<span>
 								You&apos;re viewing in Instagram!
 								<p
-									onClick={() => setClosed(true)}
 									className="underline pl-1"
 								>
 									Try it in your browser!
@@ -139,7 +136,7 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 
 								
 							</span>
-							<button className="" onClick={closeAdvertiseDiscord}>
+							<button className="" onClick={()=>setClosed(true)}>
 								<RiCloseCircleLine className="inline-block" size="1.1rem" />
 							</button>
 						</p>
