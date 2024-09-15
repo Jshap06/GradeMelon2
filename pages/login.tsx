@@ -65,7 +65,7 @@ export default function Login({
 		StudentVue.findDistricts(zipCode)
 			.then((res) => {
 				setDisstricts(res);
-				setDistrictURL(res[0])
+				setDistrictURL(res[0].parentVueUrl)
 			})
 			.catch((err) => {
 				console.log(err);
