@@ -144,7 +144,7 @@ export default function Grades({
 		let tempProps = {};
 		tempProps["desiredGrade"] = 90;
 		course.categories.forEach((cat) => {
-			tempProps[cat.name] = cat.weight * 100;
+			tempProps[cat.name] = cat.weight;
 		});
 		setOptimizeProps(tempProps);
 		setShowModal(true);
@@ -159,7 +159,7 @@ export default function Grades({
 	const optimizeGrades = () => {
 		let points = Object.values(optimizeProps);
 		points.splice(0, 1);
-		let results = genTable(course, optimizeProps.desiredGrade, points);
+		let results = genTable(course, optimizeProps.desiredGrade*100, points);
 		setSolution(results);
 	};
 //
@@ -238,7 +238,7 @@ export default function Grades({
 												max={100}
 												value={optimizeProps?.desiredGrade}
 												onChange={(e) =>
-													updateOptimize(e.target.value, "desiredGrade")
+													updateOptimize((e.target.value), "desiredGrade")
 												}
 												className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 												placeholder="90"
@@ -300,7 +300,7 @@ export default function Grades({
 														scope="row"
 														className="py-4 pl-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
 													>
-														{sol[1].toFixed(2)}%
+														{(sol[1]/100).toFixed(2)}%
 													</td>
 												</tr>
 											))}
