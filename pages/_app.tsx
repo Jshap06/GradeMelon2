@@ -25,9 +25,7 @@ const noShowNav = ["/login", "/", "/privacy", "/letter"];
 
 function MyApp({ Component, pageProps }) {
 	const router = useRouter();
-	const [districtURL, setDistrictURL] = useState<string>("https://md-mcps-psv.edupoint.com");
-	if (typeof window !== 'undefined' && localStorage.getItem('districtUrl')) {
-		setDistrictURL(localStorage.getItem('districtURL'))}
+	const [districtURL, setDistrictURL] = useState<string>(undefined);
 	const [client, setClient] = useState(undefined);
 	const [studentInfo, setStudentInfo] = useState(undefined);
 	const [toasts, setToasts] = useState<Toast[]>([]);
@@ -84,6 +82,12 @@ function MyApp({ Component, pageProps }) {
 				setToasts((toasts) => toasts.slice(1));
 			}, 5000);
 	}
+
+	useEffect(()=>{
+		if (typeof window !== 'undefined' && districtURL==undefined && localStorage.getItem('districtUrl')) {
+			setDistrictURL(localStorage.getItem('districtURL'))}else{setDistrictURL("https://md-mcps-psv.edupoint.com/")};
+
+	},[])
 
 	useEffect(()=>{
 		console.log("major tom")
