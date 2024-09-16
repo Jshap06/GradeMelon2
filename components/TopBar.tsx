@@ -21,6 +21,8 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 	const [dropdown, setDropdown] = useState(false);
 	const [advertisePWA, setAdvertisePWA] = useState(false);
 	const [advertiseDiscord, setAdvertiseDiscord] = useState(false);
+	const [advertiseBrowser,setAdvertiseBrowser]=useState(false);
+	const [closed,setClosed]=useState(false);
 
 	useEffect(() => {
 		if (!window.matchMedia("(display-mode: standalone)").matches) {
@@ -40,6 +42,16 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 		
 	}, []);
 
+
+
+	useEffect(() => {
+		if (navigator.userAgent.includes('Instagram') === true) {
+			setAdvertiseBrowser(true);
+			
+		}
+	
+}, []);
+
 	const closeAdvertisePWA = () => {
 		setAdvertisePWA(false);
 		localStorage.setItem("advertisePWA", "false");
@@ -49,13 +61,15 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 		setAdvertiseDiscord(false);
 		localStorage.setItem("advertiseDiscord", "false");
 	};
+
+
 	
 	return (
 		<div>
 
 			<div className="fixed top-0 w-full z-10">
 
-				{advertisePWA && client && (
+				{!advertiseBrowser && advertisePWA && client && (
 			<div>
 					<div className="align-top w-full bg-primary-600 px-4 py-3 text-white">
 						<p className="text-center text-sm font-medium flex gap-2 justify-center">
@@ -82,7 +96,7 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 			
 				</div>
 				)}
-							{!advertisePWA && advertiseDiscord && client &&(
+							{!advertiseBrowser&& !advertisePWA && advertiseDiscord && client &&(
 			<div className="w-full bg-primary-600 px-4 py-3 text-white relative y-0">
 						<p className="text-center text-sm font-medium flex gap-2 justify-center">
 							<span>
@@ -105,6 +119,29 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 							</button>
 						</p>
 					</div>)}
+					
+					{advertiseBrowser && !closed && (
+			<div className="w-full bg-primary-600 px-4 py-3 text-white relative y-0">
+						<p className="text-center text-sm font-medium flex gap-2 justify-center">
+							<span>
+								You&apos;re viewing in Instagram!
+								<p
+									className="underline pl-1"
+								>
+									Try it in your browser!
+								</p> 
+						
+							
+					
+
+								
+							</span>
+							<button className="" onClick={()=>setClosed(true)}>
+								<RiCloseCircleLine className="inline-block" size="1.1rem" />
+							</button>
+						</p>
+					</div>)}
+
 				<nav className="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-800">
 					<div className=" flex flex-wrap justify-between items-center">
 						<Link href="/" className="flex items-center">

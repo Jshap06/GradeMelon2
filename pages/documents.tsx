@@ -93,7 +93,7 @@ export default function Documents({ client,createError }: DocumentsProps) {
             await client.getDocuments().then(res=>{
 				console.log("why")
                 setDocuments(res);
-			setLoading(false)})
+			setLoading(false)}).catch(error=>{createError(error.message)})
             }
 		try {
 		if(client.documents.length!=0){
