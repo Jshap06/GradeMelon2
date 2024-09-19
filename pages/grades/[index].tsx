@@ -408,7 +408,7 @@ export default function Grades({
 								style={{ width: `${grade.raw < 100 ? grade.raw : 100}%` }}
 							>
 								<p className="absolute">
-									{name} ({!isNaN(grade.raw) ? `${grade.raw}%` : "N/A"}) -{" "}
+									{name} ({!isNaN(grade.raw) ? `${Number.isInteger(grade.raw) ? grade.raw : grade.raw.toFixed(2)}%` : "N/A"}) -{" "}
 									{points.earned}/{points.possible}
 								</p>
 							</div>
