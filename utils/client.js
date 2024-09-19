@@ -5,7 +5,8 @@ import jQuery from "jquery";
 import {letterGradeColor,letterGrade,isWeighted} from "./grades";
 
 
-const expressUrl="https://desirable-rebirth-production.up.railway.app";
+const expressUrl="https://grademelonbackend-diagnostics.up.railway.app";
+
 
 class Client{
     constructor(credentials,domain="https://md-mcps-psv.edupoint.com"){
