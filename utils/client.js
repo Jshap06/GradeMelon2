@@ -5,7 +5,9 @@ import jQuery from "jquery";
 import {letterGradeColor,letterGrade,isWeighted} from "./grades";
 
 
+//const expressUrl="https://grademelonbackend-diagnostics.up.railway.app";
 const expressUrl="https://desirable-rebirth-production.up.railway.app";
+
 
 class Client{
     constructor(credentials,domain="https://md-mcps-psv.edupoint.com"){
@@ -285,9 +287,14 @@ if(assignments[1].responseData.data.length==0){this.parsedGrades.courses[course]
                 assignment.points={earned:parseFloat(item.points.toString()),possible:parseFloat(item.pointsPossible.toString())};
                 assignment.date={due:new Date(item.due_date)};
                 assignment.category=item.assignmentType;
+                if(!isNaN(assignment.points.earned)){
+                    console.log(assignment.points.earned)
+                    console.log("SUCK ME OFF PLEEAAAASE")
                 try{
                 categories[assignment.category].points.earned+=assignment.points.earned;}catch(error){console.log("sheeesh");console.log(assignment.category);console.log(assignment.name);console.log(categories);console.log(assignments)}
 categories[assignment.category].points.possible+=assignment.points.possible;
+                
+                }
                 assignments2.push(assignment);
             }
             )});
