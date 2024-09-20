@@ -25,7 +25,7 @@ const noShowNav = ["/login", "/", "/privacy", "/letter"];
 
 function MyApp({ Component, pageProps }) {
 	const router = useRouter();
-	const [districtURL, setDistrictURL] = useState(undefined)
+	const [districtURL, setDistrictURL] = useState("https://md-mcps-psv.edupoint.com")
 	const [client, setClient] = useState(undefined);
 	const [studentInfo, setStudentInfo] = useState(undefined);
 	const [toasts, setToasts] = useState<Toast[]>([]);
