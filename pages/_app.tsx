@@ -25,7 +25,7 @@ const noShowNav = ["/login", "/", "/privacy", "/letter"];
 
 function MyApp({ Component, pageProps }) {
 	const router = useRouter();
-	const [districtURL, setDistrictURL] = useState(undefined)
+	const [districtURL, setDistrictURL] = useState("https://md-mcps-psv.edupoint.com")
 	const [client, setClient] = useState(undefined);
 	const [studentInfo, setStudentInfo] = useState(undefined);
 	const [toasts, setToasts] = useState<Toast[]>([]);
@@ -47,12 +47,10 @@ function MyApp({ Component, pageProps }) {
 				localStorage.setItem("remember", "true");
 				localStorage.setItem("username", username);
 				Cookies.set('password',student.credentials.password,{expires:7,secure:false,sameSite:"Lax"})
-				localStorage.setItem('districtUrl',student.domain)
 			} else {
 				localStorage.setItem("remember", "false");
 				Cookies.remove('password');
 				localStorage.removeItem("username");
-				localStorage.removeItem("districtUrl");
 			}
 			setLoading(false);
 			return true;
@@ -73,7 +71,6 @@ function MyApp({ Component, pageProps }) {
 		setGrades(undefined);
 		if(localStorage.getItem("remember")=="false"){localStorage.removeItem("username")}
 		Cookies.remove("password");
-		localStorage.removeItem("districtUrl");
 	};
 
 	function createError(message:string){
@@ -82,11 +79,7 @@ function MyApp({ Component, pageProps }) {
 				setToasts((toasts) => toasts.slice(1));
 			}, 5000);
 	}
-	useEffect(()=>{
-		if (typeof window !== 'undefined' && districtURL==undefined && localStorage.getItem('districtUrl')) {
-		setDistrictURL(localStorage.getItem('districtURL'))}else{setDistrictURL("https://md-mcps-psv.edupoint.com")};
 
-	},[])
 
 	useEffect(()=>{
 		console.log("major tom")
