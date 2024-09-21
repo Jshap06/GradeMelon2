@@ -16,6 +16,7 @@ import useWindowSize from '../hooks/useWindowSize';
 import Cookies from "js-cookie";
 import { Analytics } from "@vercel/analytics/react";
 
+
 interface Toast {
 	title: string;
 	type: "success" | "error" | "warning" | "info";
@@ -37,6 +38,12 @@ function MyApp({ Component, pageProps }) {
 	const { width } = useWindowSize();
 	const isMediumOrLarger = width >= 768;
 
+
+
+	  
+
+
+
 	const login = async (username: string, password: string, save: boolean,cookie=false) => {
 		setLoading(true);
 		const student = new Client({ username, password },districtURL);
@@ -45,12 +52,12 @@ function MyApp({ Component, pageProps }) {
 			setClient(student);
 			if (save) {
 				localStorage.setItem("remember", "true");
-				localStorage.setItem("username", username);
+				Cookies.set("username",username,{expires:7,secure:false,sameSite:"Lax"})
 				Cookies.set('password',student.credentials.password,{expires:7,secure:false,sameSite:"Lax"})
 			} else {
 				localStorage.setItem("remember", "false");
 				Cookies.remove('password');
-				localStorage.removeItem("username");
+				Cookies.remove("username");
 			}
 			setLoading(false);
 			return true;
@@ -69,8 +76,9 @@ function MyApp({ Component, pageProps }) {
 		router.push("/login");
 		setStudentInfo(undefined);
 		setGrades(undefined);
-		if(localStorage.getItem("remember")=="false"){localStorage.removeItem("username")}
+		if(localStorage.getItem("remember")=="false"){Cookies.remove("username")}
 		Cookies.remove("password");
+
 	};
 
 	function createError(message:string){
@@ -80,6 +88,18 @@ function MyApp({ Component, pageProps }) {
 			}, 5000);
 	}
 
+
+	useEffect(()=>{
+	if(typeof(window)!="undefined"){
+	window.onerror = function (message, source, lineno, colno, error) {
+		console.error('Global error caught:', message, error);
+		// You can trigger a refresh or show a custom message to the user
+		setTimeout(() => {
+		  window.location.reload();  // Refresh the page after an error
+		}, 1000);
+	  };
+	}
+},[])
 
 	useEffect(()=>{
 		console.log("major tom")
@@ -97,8 +117,8 @@ function MyApp({ Component, pageProps }) {
 
 	useEffect(() => {
 		async function doLogin(){
-			await login(localStorage.getItem("username"),Cookies.get("password"),true,true)}
-		if(client===undefined&&localStorage.getItem("username")!=null&&Cookies.get("password")!=undefined){
+			await login(Cookies.get("username"),Cookies.get("password"),true,true)}
+		if(client===undefined&&Cookies.get("username")!=undefined&&Cookies.get("password")!=undefined){
 			doLogin();
 			
 		}else{if(client===undefined&&(!noShowNav.includes(router.pathname)||router.pathname=="/")){router.push("/login")}}

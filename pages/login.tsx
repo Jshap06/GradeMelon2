@@ -5,6 +5,7 @@ import { BiSearchAlt } from "react-icons/bi";
 import Head from "next/head";
 import StudentVue from "studentvue";
 import allDistricts from "../lib/districts";
+import Cookies from "js-cookie";
 
 interface LoginProps {
 	districtURL: string;
@@ -56,8 +57,8 @@ export default function Login({
 		if (localStorage.getItem("remember") === "true") {
 			setCheckbox(true);
 		}
-    if (localStorage.getItem("username")!=null){
-        setUsername(localStorage.getItem("username"))
+    if (Cookies.get("username")!=undefined){
+        setUsername(Cookies.get("username"))
         }
 	}, []);
 

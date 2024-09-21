@@ -393,9 +393,14 @@ categories[assignment.category].points.possible+=assignment.points.possible;
         catch(error){console.log("TEAR OFF MY BALLS WITH A RUSTED SPOON AND FEED THEM TO ME");console.log(error.message);if(error.message=="Failed to fetch"){return rej(new Error("Network Error"))}else{return rej(error)}}
     console.log("HEY")
     if (response.status===false){
+        if(response.message.includes("Synergy")){
+            const myreturn = await this.refresh(cookie_sourced);
+            return myreturn;
+        }
+        else{
         console.log("ima get violent low key")
             console.log(response);
-            rej(new Error(response.message));}
+            rej(new Error(response.message));}}
     else{
         console.log("ima not get violent low key")
         console.log(this.cookies)
