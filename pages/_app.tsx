@@ -131,13 +131,7 @@ function MyApp({ Component, pageProps }) {
 				<title>Grade Melon</title>
 
 			</Head>
-			<script async src="https://www.googletagmanager.com/gtag/js?id=G-0CB45XNXR0">
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-0CB45XNXR0');
-</script>
+			<script async src="https://www.googletagmanager.com/gtag/js?id=G-0CB45XNXR0"/>
 			<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4194284530688181"
      crossOrigin="anonymous"></script>
 			<div className="absolute p-5 z-20">
