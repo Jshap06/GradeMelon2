@@ -131,12 +131,8 @@ function MyApp({ Component, pageProps }) {
 				<title>Grade Melon</title>
 
 			</Head>
-			<Script
-				async
-				src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5925944145079992"
-				crossOrigin="anonymous"
-				strategy="beforeInteractive"
-			/>
+			<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4194284530688181"
+     crossOrigin="anonymous"></script>
 			<div className="absolute p-5 z-20">
 				{toasts.map(({ title, type }, i) => (
 					<div className="mb-5 z-50" key={i}>
