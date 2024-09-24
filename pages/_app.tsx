@@ -130,8 +130,7 @@ function MyApp({ Component, pageProps }) {
 			<Head>
 				<title>Grade Melon</title>
 
-			</Head>
-			<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4194284530688181"
+			</Head><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4194284530688181"
      crossOrigin="anonymous"></script>
 			<div className="absolute p-5 z-20">
 				{toasts.map(({ title, type }, i) => (
