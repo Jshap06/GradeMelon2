@@ -5,7 +5,9 @@ import jQuery from "jquery";
 import {letterGradeColor,letterGrade,isWeighted} from "./grades";
 
 
+//const expressUrl="https://grademelonbackend-diagnostics.up.railway.app";
 const expressUrl="https://desirable-rebirth-production.up.railway.app";
+
 
 class Client{
     constructor(credentials,domain="https://md-mcps-psv.edupoint.com"){
@@ -285,9 +287,14 @@ if(assignments[1].responseData.data.length==0){this.parsedGrades.courses[course]
                 assignment.points={earned:parseFloat(item.points.toString()),possible:parseFloat(item.pointsPossible.toString())};
                 assignment.date={due:new Date(item.due_date)};
                 assignment.category=item.assignmentType;
+                if(!isNaN(assignment.points.earned)){
+                    console.log(assignment.points.earned)
+                    console.log("SUCK ME OFF PLEEAAAASE")
                 try{
                 categories[assignment.category].points.earned+=assignment.points.earned;}catch(error){console.log("sheeesh");console.log(assignment.category);console.log(assignment.name);console.log(categories);console.log(assignments)}
 categories[assignment.category].points.possible+=assignment.points.possible;
+                
+                }
                 assignments2.push(assignment);
             }
             )});
@@ -386,9 +393,14 @@ categories[assignment.category].points.possible+=assignment.points.possible;
         catch(error){console.log("TEAR OFF MY BALLS WITH A RUSTED SPOON AND FEED THEM TO ME");console.log(error.message);if(error.message=="Failed to fetch"){return rej(new Error("Network Error"))}else{return rej(error)}}
     console.log("HEY")
     if (response.status===false){
+        if(response.message.includes("Synergy")){
+            const myreturn = await this.refresh(cookie_sourced);
+            return myreturn;
+        }
+        else{
         console.log("ima get violent low key")
             console.log(response);
-            rej(new Error(response.message));}
+            rej(new Error(response.message));}}
     else{
         console.log("ima not get violent low key")
         console.log(this.cookies)
