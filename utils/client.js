@@ -6,7 +6,7 @@ import {letterGradeColor,letterGrade,isWeighted} from "./grades";
 
 
 //const expressUrl="https://grademelonbackend-diagnostics.up.railway.app";
-const expressUrl="https://desirable-rebirths-production.up.railway.app";
+const expressUrl="https://desirable-rebirth-production.up.railway.app";
 
 
 class Client{
