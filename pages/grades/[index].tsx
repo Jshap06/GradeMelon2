@@ -116,7 +116,7 @@ export default function Grades({
 		client.getparseGrades(grades.periods[p].gu).then(async(res)=>{
 		console.log("high key confused")
 		setGrades(res);	await client.getparseAssignments(parseInt(index as string),res,"",p).then(newgrades=>{console.log("skullduggery");console.log(JSON.stringify(grades));setGrades(newgrades);setPeriod(p);
-		}).catch(error=>{createError(error)});
+		}).catch(error=>{createError(error);return});
 		 //since setting state is synchronus in function, but async
 		//in its effect, asyncDoer runs, and prob anything on this render runs, with the old value of
 		//grades, so ig I just have to pass it in , and since it's no longer mutating the 
