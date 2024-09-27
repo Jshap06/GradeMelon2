@@ -23,6 +23,7 @@ interface GradesProps {
 	createError:(message:string)=>void;
 	grades2:GradesType;
 	setGrades2: (boolean:boolean) =>void;
+	current:any
 }
 
 export default function Grades({
@@ -31,7 +32,7 @@ export default function Grades({
 	setGrades,
 	setToasts,
 	period,
-	setPeriod, createError,grades2,setGrades2
+	setPeriod, createError,grades2,setGrades2,current
 }: GradesProps) {
 	const router = useRouter();
 	const [loading, setLoading] = useState(grades ? false : true);
@@ -39,6 +40,7 @@ export default function Grades({
 	//const [period, setPeriod] = useState<number>();
 	const [gpaModal, setGpaModal] = useState(false);
 	const view = (router.query.view as string) || defaultView;
+	
 
 
 	console.log(period);
@@ -83,10 +85,11 @@ export default function Grades({
 	useEffect(()=>{
 		async function asyncDoer(){
 			for(const [index,value] of grades.courses.entries()){
+				if(!current[String(index)]){
 				await client.getparseAssignments(index,grades,"",period).then(newgrades=>{
-					setGrades(newgrades)
+					setGrades(newgrades);current[String(index)]=true;
 				}).catch(error=>createError(error))
-			}
+			}}
 		}
 		if(grades&&client&&!grades2){
 			setGrades2(true)
@@ -110,6 +113,7 @@ export default function Grades({
 				setPeriod(p);
 				console.log("my life is a nightmare")
 				setLoading(false)
+				for(let key in current){delete current[key]};
 				setGrades2(false)
 			});
 		} catch (err) {
