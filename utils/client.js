@@ -373,7 +373,7 @@ categories[assignment.category].points.possible+=assignment.points.possible;
     })}
 
 
-    async refresh(cookie_sourced=true){
+    async refresh(cookie_sourced=true,recursive=0){
         console.log(this.credentials)
         console.log(cookie_sourced);
     return new Promise(async(res,rej)=>{
@@ -393,8 +393,9 @@ categories[assignment.category].points.possible+=assignment.points.possible;
         catch(error){console.log("TEAR OFF MY BALLS WITH A RUSTED SPOON AND FEED THEM TO ME");console.log(error.message);if(error.message=="Failed to fetch"){return rej(new Error("Network Error"))}else{return rej(error)}}
     console.log("HEY")
     if (response.status===false){
-        if(response.message.includes("Synergy")){
-            const myreturn = await this.refresh(cookie_sourced);
+        if(response.message.includes("Synergy")&&recursive<3){
+            recursive++;
+            const myreturn = await this.refresh(cookie_sourced,recursive);
             return myreturn;
         }
         else{
