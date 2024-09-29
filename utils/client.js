@@ -5,8 +5,8 @@ import jQuery from "jquery";
 import {letterGradeColor,letterGrade,isWeighted} from "./grades";
 
 
-//const expressUrl="https://grademelonbackend-diagnostics.up.railway.app";
-const expressUrl="https://desirable-rebirth-production.up.railway.app";
+const expressUrl="https://grademelonbackend-diagnostics.up.railway.app";
+//const expressUrl="https://desirable-rebirth-production.up.railway.app";
 
 
 class Client{
@@ -289,7 +289,6 @@ if(assignments[1].responseData.data.length==0){this.parsedGrades.courses[course]
                 assignment.category=item.assignmentType;
                 if(!isNaN(assignment.points.earned)){
                     console.log(assignment.points.earned)
-                    console.log("SUCK ME OFF PLEEAAAASE")
                 try{
                 categories[assignment.category].points.earned+=assignment.points.earned;}catch(error){console.log("sheeesh");console.log(assignment.category);console.log(assignment.name);console.log(categories);console.log(assignments)}
 categories[assignment.category].points.possible+=assignment.points.possible;
@@ -298,7 +297,7 @@ categories[assignment.category].points.possible+=assignment.points.possible;
                 assignments2.push(assignment);
             }
             )});
-    const categories2=[];assignments[0]
+    const categories2=[];
     for (let category of Object.keys(categories)){     categories[category].grade.raw=(categories[category].points.earned/categories[category].points.possible)*100;categories[category].grade.color=letterGradeColor(letterGrade((categories[category].points.earned/categories[category].points.possible)*100));
         categories2.push(categories[category]);                               //aslo here you'd do the colors and leter grade functions
     };
@@ -447,7 +446,7 @@ async getparseGrades(selector=null) {
                     course.room = listedData[3].substring(6);
                     course.teacher = { name: listedData[1], email: listedData[1].substring(0, listedData[1].indexOf(" ")) + "." + listedData[1].substring(listedData[1].indexOf(" ") + 1) + "@mcpsmd.net" };
                     course.loadstring = jQuery(element).find("button").attr("data-focus");
-                    const mark = $.find('.row.gb-class-row[data-guid=' + JSON.parse(course.loadstring).FocusArgs.classID + "] .mark").text();
+                    const mark = parseFloat($.find('.row.gb-class-row[data-guid=' + JSON.parse(course.loadstring).FocusArgs.classID + "] .score").text());
                     console.log("HEY");
                     console.log(mark);
                     course.grade = {
