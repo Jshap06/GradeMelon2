@@ -441,7 +441,7 @@ async getparseGrades(selector=null) {
                     course.room = listedData[3].substring(6);
                     course.teacher = { name: listedData[1], email: listedData[1].substring(0, listedData[1].indexOf(" ")) + "." + listedData[1].substring(listedData[1].indexOf(" ") + 1) + "@mcpsmd.net" };
                     course.loadstring = jQuery(element).find("button").attr("data-focus");
-                    const mark = $.find('.row.gb-class-row[data-guid=' + JSON.parse(course.loadstring).FocusArgs.classID + "] .mark").text();
+                    const mark = parseFloat($.find('.row.gb-class-row[data-guid=' + JSON.parse(course.loadstring).FocusArgs.classID + "] .score").text());
                     console.log("HEY");
                     console.log(mark);
                     course.grade = {
