@@ -129,23 +129,10 @@ const logout = async () => {
 		<Flowbite>
 			<Head>
 				<title>Grade Melon</title>
-				<script
-					defer
-					data-domain="grademelon.com"
-					src="https://stats.tinu.tech/js/plausible.js"
-				></script>
-				<script
-					defer
-					src="https://static.cloudflareinsights.com/beacon.min.js"
-					data-cf-beacon='{"token": "c01b4332f8c346bdbf9df1938384019b"}'
-				></script>
 			</Head>
-			<Script
-				async
-				src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5925944145079992"
-				crossOrigin="anonymous"
-				strategy="beforeInteractive"
-			/>
+			<script async src="https://www.googletagmanager.com/gtag/js?id=G-0CB45XNXR0"/>
+			<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4194284530688181"
+     crossOrigin="anonymous"></script>
 			<div className="absolute p-5 z-20">
 				{toasts.map(({ title, type }, i) => (
 					<div className="mb-5 z-50" key={i}>
