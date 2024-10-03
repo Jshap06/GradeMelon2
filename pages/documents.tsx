@@ -55,6 +55,9 @@ export default function Documents({ client }: DocumentsProps) {
 
 	useEffect(() => {
 		try {
+			console.log("DEATTHHHHH FUCK")
+			console.log(documents)
+			if(!client.loadedDocuments){
 			client.documents().then((res) => {
 				console.log(res);
 				res.forEach((doc) => {
@@ -62,8 +65,12 @@ export default function Documents({ client }: DocumentsProps) {
 					doc.file.type = parseName(doc.file.type);
 				});
 				setDocuments(res);
+				client.loadedDocuments=res;
 				setLoading(false);
-			});
+			});}else{
+				setDocuments(client.loadedDocuments)
+				setLoading(false)
+			}
 		} catch {
 			if (localStorage.getItem("remember") === "false") {
 				router.push("/login");

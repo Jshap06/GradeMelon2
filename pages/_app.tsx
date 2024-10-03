@@ -8,11 +8,12 @@ import SideBar from "../components/SideBar";
 import MobileBar from "../components/MobileBar";
 import { Grades } from "../utils/grades";
 import Head from "next/head";
-import Script from "next/script";
 import { HiX } from "react-icons/hi";
 import BackgroundColor from "../components/BackgroundColor";
 import { AnimateSharedLayout } from "framer-motion";
 import Cookies from "js-cookie";
+import useWindowSize from '../hooks/useWindowSize';
+import { Analytics } from "@vercel/analytics/react";
 
 interface Toast {
 	title: string;
@@ -32,6 +33,8 @@ function MyApp({ Component, pageProps }) {
 	const [grades, setGrades] = useState<Grades>();
 	const [period, setPeriod] = useState<number>();
 	const [loading, setLoading] = useState(false);
+	const { width } = useWindowSize();
+	const isMediumOrLarger = width >= 768;
 
 	const login = async (
 		username: string,
@@ -127,8 +130,10 @@ const logout = async () => {
 
 	return (
 		<Flowbite>
+			<Analytics/>
 			<Head>
 				<title>Grade Melon</title>
+
 			</Head>
 			<script async src="https://www.googletagmanager.com/gtag/js?id=G-0CB45XNXR0"/>
 			<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4194284530688181"
@@ -177,9 +182,9 @@ const logout = async () => {
 						</AnimateSharedLayout>
 					)}
 
-					{!noShowNav.includes(router.pathname) && (
+					{!noShowNav.includes(router.pathname) && isMediumOrLarger && (
 						<div className="pb-16 md:pb-0">
-							<div className="hidden md:flex">
+							<div className="flex">
 								<SideBar studentInfo={studentInfo} logout={logout} />
 								<AnimateSharedLayout>
 									<Component
@@ -198,6 +203,10 @@ const logout = async () => {
 									/>
 								</AnimateSharedLayout>
 							</div>
+						</div>
+					)}
+					{!noShowNav.includes(router.pathname) && !isMediumOrLarger && (
+						<div className="pb-16 md:pb-0">
 							<div className="md:hidden">
 								<AnimateSharedLayout>
 									<Component

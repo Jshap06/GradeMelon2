@@ -40,13 +40,20 @@ export default function Attendance({ client }: AttendanceProps) {
 
 	useEffect(() => {
 		try {
+			if(!client.loadedAttendance){
 			client.attendance().then((res) => {
 				setData(res);
 				setLoading(false);
 				let temp = parseBarData(res?.absences);
 				setBarData(temp);
+				client.loadedAttendance=[res,temp]
 				console.log(temp);
-			});
+			});}else{
+				setData(client.loadedAttendance[0]);
+				setBarData(client.loadedAttendance[1]);
+				setLoading(false);
+
+			}
 		} catch {
 			if (localStorage.getItem("remember") === "false") {
 				router.push("/login");
