@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* custom scrollbar */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar
+{
+  width: 8px;
+  height: 8px;
+  background-color: #111827;
+}
+
+::-webkit-scrollbar-thumb
+{
+  border-radius: 4px;
+  background-color: #374151;
+}
+}
+
+/* custom highlight */
+::selection {
+  background-color: #f43f5e;
+  color: #ffffff;
+}
+
+/* prevent blue highlight on click */
+@media (max-width: 768px) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: auto !important;
+    -webkit-user-select: auto !important;
+    -khtml-user-select: auto !important;
+    -moz-user-select: auto !important;
+    -ms-user-select: auto !important;
+    user-select: auto !important;
+  }
+}
+
+:focus {
+    outline: none !important;
+}
