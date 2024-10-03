@@ -70,6 +70,7 @@ function MyApp({ Component, pageProps }) {
 					Cookies.remove("username");
 					Cookies.remove("password");
 				}
+				if(router.pathname=="/"||router.pathname=="/login"){router.push("/grades")}
 				await setLoading(false);
 				return true;
 			})
