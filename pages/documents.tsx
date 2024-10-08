@@ -25,19 +25,53 @@ const base64toBlob = (base64Data: string) => {
 
 const openBase64NewTab = (base64Pdf: string): void => {
 	let blob = base64toBlob(base64Pdf);
-	if (typeof window !== "undefined") {
-		if (window.navigator && (window.navigator as any).msSaveOrOpenBlob) {
-			(window.navigator as any).msSaveOrOpenBlob(blob, "pdfBase64.pdf");
-		} else {
-			const blobUrl = URL.createObjectURL(blob);
-			setTimeout(() => {
-				window.open(blobUrl);
-			});
-			//let newWindow = window.location.assign(blobUrl);
-			//newWindow.location = blobUrl;
-		}
-	}
+	console.log('Blob size:', blob.size);
+
+	function isiPhone(): boolean {
+	   return /iPhone|iPod/.test(navigator.userAgent) && !hasMSStream(window);
+   }
+
+   // Type guard for navigator
+   function hasMsSaveOrOpenBlob(navigator: Navigator): navigator is Navigator & { msSaveOrOpenBlob: (blob: Blob, defaultName?: string) => boolean } {
+	   return 'msSaveOrOpenBlob' in navigator;
+   }
+
+   function hasMSStream(window: Window): window is Window & { MSStream: any } {
+	   return 'MSStream' in window;
+   }
+
+   // Check if the window and navigator are available
+   if (typeof window !== "undefined") {
+	   if (hasMsSaveOrOpenBlob(window.navigator)) {
+		   // For IE and Edge
+		   window.navigator.msSaveOrOpenBlob(blob, "document.pdf");
+	   } else {
+		   const blobUrl = URL.createObjectURL(blob);
+		   const anchor = document.createElement('a');
+		   anchor.href = blobUrl;
+
+		   if (isiPhone()) {
+			   anchor.target = '_self';  // Open in the current tab for iPhone
+		   } else {
+			   anchor.target = '_blank';  // Open in a new tab for other devices
+		   }
+
+		   // Add the anchor to the document body
+		   document.body.appendChild(anchor);
+
+		   // Trigger a click event on the anchor
+		   anchor.click();
+
+		   // Remove the anchor from the document body
+		   document.body.removeChild(anchor);
+
+		   // Clean up the object URL after some time
+		   setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+	   }
+   }
 };
+
+
 
 const parseName = (name: string): string => {
 	return new DOMParser().parseFromString(name, "text/html").documentElement
@@ -57,7 +91,7 @@ export default function Documents({ client }: DocumentsProps) {
 		try {
 			console.log("DEATTHHHHH FUCK")
 			console.log(documents)
-			if(!client.loadedDocuments){
+			if(client.loadedDocuments!==undefined){
 			client.documents().then((res) => {
 				console.log(res);
 				res.forEach((doc) => {

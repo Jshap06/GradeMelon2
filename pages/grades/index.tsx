@@ -57,8 +57,10 @@ export default function Grades({
 				try {
 					client.gradebook().then((res) => {
 						let parsedGrades = parseGrades(res);
-						console.log(parsedGrades);
+						console.log("checker")
+						console.log(res);
 						setGrades(parsedGrades);
+						console.log(parsedGrades)
 						setPeriod(parsedGrades.period.index);
 						setLoading(false);
 					});

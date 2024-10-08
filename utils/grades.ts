@@ -271,12 +271,13 @@ const parseGrades = (grades: Gradebook): Grades => {
 			index: index,
 		})),
 	};
-	parsedGrades.courses.map((course) => {
-		course.categories.map((category, i) => {
-			course = calculateCategory(course, i);
+	parsedGrades.courses.forEach((course) => {
+		if(course.categories.length!=0){
+		course.categories.forEach((category, i) => {
+		  course = calculateCategory(course, i);
 		});
-		calculateGrade(course);
-	});
+		calculateGrade(course);}
+	  });	  
 	return parsedGrades;
 };
 

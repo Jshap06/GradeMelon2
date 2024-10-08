@@ -55,7 +55,7 @@ export default function Grades({
 
 	useEffect(() => {
 		try {
-			if (!grades) {
+			if (!grades&&client) {
 				client.gradebook().then((res) => {
 					console.log(typeof index);
 					let parsedGrades = parseGrades(res);

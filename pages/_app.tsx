@@ -14,6 +14,7 @@ import { AnimateSharedLayout } from "framer-motion";
 import Cookies from "js-cookie";
 import useWindowSize from '../hooks/useWindowSize';
 import { Analytics } from "@vercel/analytics/react";
+import allDistricts from "../lib/districts";
 
 interface Toast {
 	title: string;
@@ -25,7 +26,7 @@ const noShowNav = ["/login", "/", "/privacy", "/letter"];
 function MyApp({ Component, pageProps }) {
 	const router = useRouter();
 	const [districtURL, setDistrictURL] = useState(
-		"https://md-mcps-psv.edupoint.com"
+		undefined
 	);
 	const [client, setClient] = useState(undefined);
 	const [studentInfo, setStudentInfo] = useState(undefined);
@@ -33,6 +34,7 @@ function MyApp({ Component, pageProps }) {
 	const [grades, setGrades] = useState<Grades>();
 	const [period, setPeriod] = useState<number>();
 	const [loading, setLoading] = useState(false);
+	const [districts, setDistricts] = useState(allDistricts);
 	const { width } = useWindowSize();
 	const isMediumOrLarger = width >= 768;
 
@@ -49,6 +51,7 @@ function MyApp({ Component, pageProps }) {
 			password: password,
 		},encrypted || false)
 			.then(async (res) => {
+				console.log("para me?")
 				console.log(res);
 				await setClient(res);
 				if (save) {
@@ -63,14 +66,17 @@ function MyApp({ Component, pageProps }) {
 							const result=await response.json()
 							Cookies.set("password",result.encrpytedPassword)
 						})}
-						
-					localStorage.setItem("districtURL", districtURL);
+					districts.forEach(district=>{
+						if(district.parentVueUrl==districtURL){Cookies.set("districtURL",JSON.stringify(district))}
+					})
 				} else {
 					localStorage.setItem("remember", "false");
 					Cookies.remove("username");
 					Cookies.remove("password");
+					Cookies.remove("districtURL");
 				}
 				if(router.pathname=="/"||router.pathname=="/login"){router.push("/grades")}
+				
 				await setLoading(false);
 				return true;
 			})
@@ -82,6 +88,8 @@ function MyApp({ Component, pageProps }) {
 
 		return false;
 	};
+
+
 
 	useEffect(()=>{
 		if(client!==undefined&&studentInfo==undefined){
@@ -95,11 +103,19 @@ function MyApp({ Component, pageProps }) {
 	useEffect(() => {
 		async function doLogin(){
 			await login(Cookies.get("username"),Cookies.get("password"),true,districtURL,true)}
-		if(client===undefined&&Cookies.get("username")!=undefined&&Cookies.get("password")!=undefined){
+			if(Cookies.get("districtURL")!=undefined&&districtURL==undefined){
+				console.log("RELEASE ME")
+				console.log(JSON.parse(Cookies.get("districtURL")))
+				setDistricts([JSON.parse(Cookies.get("districtURL"))])
+				setDistrictURL(JSON.parse(Cookies.get("districtURL")).parentVueUrl)
+				console.log(districtURL)
+	
+			}else{if(districtURL==undefined){setDistrictURL("https://md-mcps-psv.edupoint.com")}}
+		if(client===undefined&&Cookies.get("username")!=undefined&&Cookies.get("password")!=undefined&&districtURL!==undefined){
 			doLogin();
 			
 		}else{if(client===undefined&&(!noShowNav.includes(router.pathname)||router.pathname=="/")){router.push("/login")}}
-	}, [client]);
+	}, [client,districtURL]);
 
 	function createError(message:string){
 		setToasts((toasts) => [...toasts, { title: message, type: "error" }]);
@@ -109,12 +125,16 @@ function MyApp({ Component, pageProps }) {
 	}
 
 const logout = async () => {
-	setClient(undefined);
-	router.push("/login");
+	await Cookies.remove("password");
+	await router.push("/login");
+	 setClient(undefined);
+	 setGrades(undefined);
+	
+	
 	setStudentInfo(undefined);
-	setGrades(undefined);
+	
 	if(localStorage.getItem("remember")=="false"){Cookies.remove("username")}
-	Cookies.remove("password");
+	Cookies.remove("districtURL");
 
 };
 
@@ -179,6 +199,8 @@ const logout = async () => {
 								period={period}
 								setPeriod={setPeriod}
 								createError={createError}
+								districts={districts}
+								setDistricts={setDistricts}
 							/>
 						</AnimateSharedLayout>
 					)}
@@ -201,6 +223,8 @@ const logout = async () => {
 										period={period}
 										setPeriod={setPeriod}
 										createError={createError}
+										districts={districts}
+										setDistricts={setDistricts}
 									/>
 								</AnimateSharedLayout>
 							</div>
@@ -223,6 +247,8 @@ const logout = async () => {
 										period={period}
 										setPeriod={setPeriod}
 										createError={createError}
+										districts={districts}
+										setDistricts={setDistricts}
 									/>
 								</AnimateSharedLayout>
 								<div className="px-4 fixed bottom-5 w-full">

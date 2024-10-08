@@ -4,7 +4,7 @@ import { Modal, Spinner } from "flowbite-react";
 import { BiSearchAlt } from "react-icons/bi";
 import Head from "next/head";
 import StudentVue from "studentvue";
-import allDistricts from "../lib/districts";
+
 import Cookies from "js-cookie";
 
 interface LoginProps {
@@ -14,6 +14,14 @@ interface LoginProps {
 	login: (username: string, password: string, save: boolean) => any;
 	setToasts: any;
 	loading: boolean;
+	createError:(message:string)=>void;
+	setDistricts:any;
+	districts:{
+		address: string;
+		name: string;
+		parentVueUrl: string;
+		zipcode?: string;
+	}[];
 }
 
 export default function Login({
@@ -23,6 +31,7 @@ export default function Login({
 	setDistrictURL,
 	setToasts,
 	loading,
+	createError,setDistricts,districts
 }: LoginProps) {
 	const router = useRouter();
 	const [username, setUsername] = useState("");
@@ -30,7 +39,7 @@ export default function Login({
 	const [checkbox, setCheckbox] = useState(false);
 	const [showModal, setShowModal] = useState(false);
 	const [zipCode, setZipCode] = useState("");
-	const [districts, setDisstricts] = useState(allDistricts);
+	
 	const [trouble, setTrouble] = useState(false);
 
 	const handleSubmit = async (e) => {
@@ -45,11 +54,6 @@ export default function Login({
 		}
 	};
 
-	useEffect(() => {
-		if (client) {
-			router.push("/grades");
-		}
-	}, [client]);
 
 	useEffect(() => {
 		if (localStorage.getItem("remember") === "true") {
@@ -63,20 +67,12 @@ export default function Login({
 	const findDistricts = async () => {
 		StudentVue.findDistricts(zipCode)
 			.then((res) => {
-				setDisstricts(res);
+				setDistricts(res);
+				setDistrictURL(res[0].parentVueUrl)
 			})
 			.catch((err) => {
 				console.log(err);
-				setToasts((toasts) => [
-					...toasts,
-					{
-						title: err.message,
-						type: "error",
-					},
-				]);
-				setTimeout(() => {
-					setToasts((toasts) => toasts.slice(1));
-				}, 5000);
+				createError(err.message)
 			});
 	};
 
