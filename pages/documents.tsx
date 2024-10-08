@@ -91,7 +91,7 @@ export default function Documents({ client }: DocumentsProps) {
 		try {
 			console.log("DEATTHHHHH FUCK")
 			console.log(documents)
-			if(client.loadedDocuments!==undefined){
+			if(client.loadedDocuments==undefined){
 			client.documents().then((res) => {
 				console.log(res);
 				res.forEach((doc) => {
