@@ -50,6 +50,7 @@ function MyApp({ Component, pageProps }) {
 		try {
 			await student.refresh(cookie);
 			setClient(student);
+			setGrades(undefined);setGrades2(undefined)
 			if (save) {
 				localStorage.setItem("remember", "true");
 				Cookies.set("username",username,{expires:7,secure:false,sameSite:"Lax"})
