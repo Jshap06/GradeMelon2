@@ -501,7 +501,7 @@ export default function privacy() {
 				If you have any questions about this Privacy Policy, You can contact us:
 			</p>
 			<ul className="list-disc pl-5">
-				<li>By email: tinu@grademelon.com</li>
+				<li>By email: support@grademelon.org</li>
 			</ul>
 		</div>
 	);
