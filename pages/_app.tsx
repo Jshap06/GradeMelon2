@@ -101,20 +101,22 @@ function MyApp({ Component, pageProps }) {
 	},[client])
 
 	useEffect(() => {
+		var refURL: string="";
 		async function doLogin(){
 			await login(Cookies.get("username"),Cookies.get("password"),true,districtURL,true)}
-			if(Cookies.get("districtURL")!=undefined&&districtURL==undefined){
-				console.log("RELEASE ME")
-				console.log(JSON.parse(Cookies.get("districtURL")))
-				setDistricts([JSON.parse(Cookies.get("districtURL"))])
-				setDistrictURL(JSON.parse(Cookies.get("districtURL")).parentVueUrl)
-				console.log(districtURL)
-	
-			}else{if(districtURL==undefined){setDistrictURL("https://md-mcps-psv.edupoint.com")}}
+		if(Cookies.get("districtURL")!=undefined&&districtURL==undefined){
+			console.log("RELEASE ME")
+			console.log(JSON.parse(Cookies.get("districtURL")))
+			setDistricts([JSON.parse(Cookies.get("districtURL"))])
+			setDistrictURL(JSON.parse(Cookies.get("districtURL")).parentVueUrl)
+			console.log(districtURL)
+			refURL=JSON.parse(Cookies.get("districtURL")).parentVueUrl;
+
+		}else{if(districtURL==undefined){setDistrictURL("https://md-mcps-psv.edupoint.com")}}
 		if(client===undefined&&Cookies.get("username")!=undefined&&Cookies.get("password")!=undefined&&districtURL!==undefined){
 			doLogin();
 			
-		}else{if(client===undefined&&(!noShowNav.includes(router.pathname)||router.pathname=="/")){router.push("/login")}}
+		}else{if(client===undefined&&(!noShowNav.includes(router.pathname)||router.pathname=="/")&&!refURL){console.log("SHIT FUCK");router.push("/login")}}
 	}, [client,districtURL]);
 
 	function createError(message:string){
