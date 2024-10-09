@@ -64,7 +64,7 @@ function MyApp({ Component, pageProps }) {
 							'body': JSON.stringify({ 'password': password })
 						}).then(async(response)=>{
 							const result=await response.json()
-							Cookies.set("password",result.encrpytedPassword)
+							Cookies.set("password",result.encrpytedPassword,{expires:7})
 						})}
 					districts.forEach(district=>{
 						if(district.parentVueUrl==districtURL){Cookies.set("districtURL",JSON.stringify(district))}
