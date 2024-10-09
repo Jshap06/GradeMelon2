@@ -107,7 +107,7 @@ export default function Documents({ client }: DocumentsProps) {
 			}
 		} catch {
 			if (localStorage.getItem("remember") === "false") {
-				router.push("/login");
+				console.log("womp womp")
 			}
 		}
 	}, [client]);

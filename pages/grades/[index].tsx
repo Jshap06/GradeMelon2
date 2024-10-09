@@ -66,7 +66,7 @@ export default function Grades({
 			}
 		} catch {
 			if (localStorage.getItem("remember") === "false") {
-				router.push("/login");
+				console.log("womp womp")
 			}
 		}
 	}, [client]);

@@ -56,7 +56,7 @@ export default function Attendance({ client }: AttendanceProps) {
 			}
 		} catch {
 			if (localStorage.getItem("remember") === "false") {
-				router.push("/login");
+				console.log("womp womp")
 			}
 		}
 	}, [client]);

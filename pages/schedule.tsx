@@ -29,7 +29,7 @@ export default function Schedule({ client }: ScheduleProps) {
 			});}else{setSchedule(client.loadedSchedule);setLoading(false)}
 		} catch {
 			if (localStorage.getItem("remember") === "false") {
-				router.push("/login");
+				console.log("womp womp")
 			}
 		}
 	}, [client, term]);
