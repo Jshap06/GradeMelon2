@@ -75,7 +75,9 @@ function MyApp({ Component, pageProps }) {
 					Cookies.remove("password");
 					Cookies.remove("districtURL");
 				}
-				if(router.pathname=="/"||router.pathname=="/login"){router.push("/grades")}
+				//if(router.pathname=="/"||router.pathname=="/login"){
+					router.push("/grades")
+				//}
 				
 				await setLoading(false);
 				return true;
