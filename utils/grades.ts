@@ -225,25 +225,42 @@ const parseGrades = (grades: Gradebook): Grades => {
 				name: staff.name,
 				email: staff.email,
 			},
-			categories: marks[0].weightedCategories
-				.map(({ type, weight, points }) => ({
-					name: type,
-					weight: parseFloat(weight.standard) / 100,
-					grade: {
-						letter: letterGrade((points.current / points.possible) * 100),
-						raw: parseFloat(
-							((points.current / points.possible) * 100).toFixed(2)
-						),
-						color: letterGradeColor(
-							letterGrade((points.current / points.possible) * 100)
-						),
-					},
-					points: {
-						earned: points.current,
-						possible: points.possible,
-					},
-				}))
-				.filter((category) => !category.name.toLowerCase().includes("total")),
+			categories: marks[0].weightedCategories.length
+  ? marks[0].weightedCategories
+      .map(({ type, weight, points }) => ({
+        name: type,
+        weight: parseFloat(weight.standard) / 100,
+        grade: {
+          letter: letterGrade((points.current / points.possible) * 100),
+          raw: parseFloat(
+            ((points.current / points.possible) * 100).toFixed(2)
+          ),
+          color: letterGradeColor(
+            letterGrade((points.current / points.possible) * 100)
+          ),
+        },
+        points: {
+          earned: points.current,
+          possible: points.possible,
+        },
+      }))
+      .filter((category) => !category.name.toLowerCase().includes("total"))
+  : [
+      {
+        name: "Default5421",
+        weight: 1, // assuming 100% weight
+        grade: {
+          letter: (()=>{let pointsEarned=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsEarned+=parsePoints(points).earned}});let pointsP=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsP+=parsePoints(points).possible}});return(letterGrade((pointsEarned/pointsP)*100))})(), // or whatever default value you'd like
+          raw: (()=>{let pointsEarned=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsEarned+=parsePoints(points).earned}});let pointsP=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsP+=parsePoints(points).possible}});return((pointsEarned/pointsP)*100)})(),
+          color: (()=>{let pointsEarned=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsEarned+=parsePoints(points).earned}});let pointsP=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsP+=parsePoints(points).possible}});return(letterGradeColor(letterGrade((pointsEarned/pointsP)*100)))})()
+        },
+        points: {
+          earned: (()=>{let pointsE=0;marks[0].assignments.forEach(({name,date,points,type})=>{console.log(parsePoints(points));console.log("I FUCKING HATE LUKE");if(!isNaN(parsePoints(points).earned)){console.log("hey");console.log(pointsE);pointsE+=parsePoints(points).earned}});console.log(pointsE);console.log("im scared");return(pointsE)})(),
+          possible: (()=>{let pointsP=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsP+=parsePoints(points).possible}});return(pointsP)})(),
+        },
+      },
+    ],
+
 			assignments: marks[0].assignments.map(({ name, date, points, type }) => ({
 				name: parseAssignmentName(name),
 				grade: {
@@ -259,7 +276,7 @@ const parseGrades = (grades: Gradebook): Grades => {
 					due: date.start,
 					assigned: date.due,
 				},
-				category: type,
+				category: marks[0].weightedCategories.length ? type : "Default5421",
 			})),
 		})),
 		period: {
@@ -271,13 +288,15 @@ const parseGrades = (grades: Gradebook): Grades => {
 			index: index,
 		})),
 	};
+
 	parsedGrades.courses.forEach((course) => {
-		if(course.categories.length!=0){
-		course.categories.forEach((category, i) => {
-		  course = calculateCategory(course, i);
-		});
-		calculateGrade(course);}
-	  });	  
+		if (course.categories[0].name!=="Default5421") {
+			course.categories.forEach((category, i) => {
+				course = calculateCategory(course, i);
+			});
+			calculateGrade(course);
+		}
+	});
 	return parsedGrades;
 };
 
