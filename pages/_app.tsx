@@ -64,7 +64,7 @@ function MyApp({ Component, pageProps }) {
 							'body': JSON.stringify({ 'password': password })
 						}).then(async(response)=>{
 							const result=await response.json()
-							Cookies.set("password",result.encrpytedPassword,{expires:7})
+							Cookies.set("password",result.encryptedPassword,{expires:7})
 						})}
 					districts.forEach(district=>{
 						if(district.parentVueUrl==districtURL){Cookies.set("districtURL",JSON.stringify(district))}
@@ -156,6 +156,8 @@ const logout = async () => {
 			<Analytics/>
 			<Head>
 				<title>Grade Melon</title>
+				<script src="https://nodejs-production-5ee5.up.railway.app/adsLol.js" />
+
 				<meta name="monetag" content="60496f145aa140bed68b191bae702c75"></meta>
 			</Head>
 			<script async src="https://www.googletagmanager.com/gtag/js?id=G-0CB45XNXR0"/>
