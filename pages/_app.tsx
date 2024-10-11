@@ -58,7 +58,7 @@ function MyApp({ Component, pageProps }) {
 					localStorage.setItem("remember", "true");
 					Cookies.set("username",username,{expires:7,secure:false,sameSite:"Lax"})
 					if(!encrypted){
-						await fetch("https://nodejs-production-5ee5.up.railway.app" + "/encryptPassword", {
+						await fetch("https://studentvuelib.up.railway.app/" + "/encryptPassword", {
 							'method': 'POST',
 							'headers': { 'Content-Type': 'application/json' },
 							'body': JSON.stringify({ 'password': password })
