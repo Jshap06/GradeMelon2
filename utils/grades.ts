@@ -255,7 +255,7 @@ const parseGrades = (grades: Gradebook): Grades => {
           color: (()=>{let pointsEarned=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsEarned+=parsePoints(points).earned}});let pointsP=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsP+=parsePoints(points).possible}});return(letterGradeColor(letterGrade((pointsEarned/pointsP)*100)))})()
         },
         points: {
-          earned: (()=>{let pointsE=0;marks[0].assignments.forEach(({name,date,points,type})=>{console.log(parsePoints(points));console.log("I FUCKING HATE LUKE");if(!isNaN(parsePoints(points).earned)){console.log("hey");console.log(pointsE);pointsE+=parsePoints(points).earned}});console.log(pointsE);console.log("im scared");return(pointsE)})(),
+          earned: (()=>{let pointsE=0;marks[0].assignments.forEach(({name,date,points,type})=>{console.log(parsePoints(points));console.log("GRAHHHH");if(!isNaN(parsePoints(points).earned)){console.log("hey");console.log(pointsE);pointsE+=parsePoints(points).earned}});console.log(pointsE);console.log("im scared");return(pointsE)})(),
           possible: (()=>{let pointsP=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsP+=parsePoints(points).possible}});return(pointsP)})(),
         },
       },
