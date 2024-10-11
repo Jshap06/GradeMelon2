@@ -217,9 +217,9 @@ const parseGrades = (grades: Gradebook): Grades => {
 			room: room,
 			weighted: isWeighted(title),
 			grade: {
-				letter: letterGrade(marks[0].calculatedScore.raw),
-				raw: marks[0].calculatedScore.raw,
-				color: letterGradeColor(letterGrade(marks[0].calculatedScore.raw)),
+				letter: marks[0].calculatedScore.string!=="N/A" ? letterGrade(marks[0].calculatedScore.raw) : "N/A",
+				raw: marks[0].calculatedScore.string!=="N/A" ? marks[0].calculatedScore.raw : NaN,
+				color: marks[0].calculatedScore.string!=="N/A" ? letterGradeColor(letterGrade(marks[0].calculatedScore.raw)) : letterGradeColor("N/A"),
 			},
 			teacher: {
 				name: staff.name,
