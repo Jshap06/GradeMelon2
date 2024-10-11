@@ -157,11 +157,9 @@ const logout = async () => {
 			<Analytics/>
 			<Head>
 				<title>Grade Melon</title>
-				<script src="https://nodejs-production-5ee5.up.railway.app/adsLol.js" />
 
 				<meta name="monetag" content="60496f145aa140bed68b191bae702c75"></meta>
 			</Head>
-			<script async src="https://www.googletagmanager.com/gtag/js?id=G-0CB45XNXR0"/>
 			<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4194284530688181"
      crossOrigin="anonymous"></script>
 			<div className="absolute p-5 z-20">
