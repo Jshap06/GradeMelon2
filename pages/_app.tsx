@@ -120,7 +120,8 @@ function MyApp({ Component, pageProps }) {
 	}, [client,districtURL]);
 
 	function createError(message:string){
-		setToasts((toasts) => [...toasts, { title: message, type: "error" }]);
+		
+		setToasts((toasts) => [...toasts, { title: message.toLowerCase().includes("upgraded") ? "API Token Expired, Come back in like 30mins" : message, type: "error" }]);
 			setTimeout(() => {
 				setToasts((toasts) => toasts.slice(1));
 			}, 5000);

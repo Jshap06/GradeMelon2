@@ -23,6 +23,7 @@ export default function Schedule({ client }: ScheduleProps) {
 			if(!client.loadedSchedule){
 			setLoading(true);
 			client.schedule(term).then((res) => {
+				client.loadedSchedule=res;
 				console.log(res);
 				setSchedule(res);
 				setLoading(false);
