@@ -39,18 +39,16 @@ export default function TopBar({ studentInfo, logout, client }: TopBarProps) {
 				setAdvertiseDiscord(true);
 				//localStorage.setItem("advertisePWA", "true");
 			}
+			if (navigator.userAgent.includes('Instagram') === true) {
+				setAdvertiseBrowser(true);
+				
+			}
+			if(localStorage.getItem("advertisePWA")===null){setAdvertisePWA(true)}
 		
 	}, []);
 
 
 
-	useEffect(() => {
-		if (navigator.userAgent.includes('Instagram') === true) {
-			setAdvertiseBrowser(true);
-			
-		}
-	
-}, []);
 
 	const closeAdvertisePWA = () => {
 		setAdvertisePWA(false);
