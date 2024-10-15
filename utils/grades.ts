@@ -193,7 +193,7 @@ const parseGrades = (grades: Gradebook): Grades => {
 			];
 		}
 	}
-	let parsedGrades = {
+	let parsedGrades:Grades = {
 		gpa:
 			grades.courses.reduce(
 				(a, b) =>
@@ -251,7 +251,7 @@ const parseGrades = (grades: Gradebook): Grades => {
         weight: 1, // assuming 100% weight
         grade: {
           letter: (()=>{let pointsEarned=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsEarned+=parsePoints(points).earned}});let pointsP=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsP+=parsePoints(points).possible}});return(letterGrade((pointsEarned/pointsP)*100))})(), // or whatever default value you'd like
-          raw: (()=>{let pointsEarned=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsEarned+=parsePoints(points).earned}});let pointsP=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsP+=parsePoints(points).possible}});return((pointsEarned/pointsP)*100)})(),
+          raw: (()=>{let pointsEarned=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsEarned+=parsePoints(points).earned}});let pointsP=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsP+=parsePoints(points).possible}});return(parseFloat(((pointsEarned/pointsP)*100).toFixed(2)))})(),
           color: (()=>{let pointsEarned=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsEarned+=parsePoints(points).earned}});let pointsP=0;marks[0].assignments.forEach(({name,date,points,type})=>{if(!isNaN(parsePoints(points).earned)){pointsP+=parsePoints(points).possible}});return(letterGradeColor(letterGrade((pointsEarned/pointsP)*100)))})()
         },
         points: {
@@ -289,7 +289,7 @@ const parseGrades = (grades: Gradebook): Grades => {
 		})),
 	};
 
-	parsedGrades.courses.forEach((course) => {
+	parsedGrades.courses.forEach((course:Course) => {
 		if (course.categories[0].name!=="Default5421") {
 			course.categories.forEach((category, i) => {
 				course = calculateCategory(course, i);
