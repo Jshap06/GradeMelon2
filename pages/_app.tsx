@@ -49,7 +49,8 @@ function MyApp({ Component, pageProps }) {
 		await StudentVue.login(url || districtURL, {
 			username: username,
 			password: password,
-		},encrypted || false)
+			encrypted:encrypted ||false
+		})
 			.then(async (res) => {
 				console.log("para me?")
 				console.log(res);
