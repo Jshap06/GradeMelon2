@@ -10,6 +10,7 @@ import {
 	Grades as GradesType,
 	Course,
 	genTable,
+	abbreviate
 } from "../../utils/grades";
 import GradeField from "../../components/GradeField";
 import CategoryField from "../../components/CategoryField";
@@ -445,20 +446,20 @@ export default function Grades({
 						</button>
 					</div>
 					<div className="m-5" />
-					<div className="overflow-x-auto shadow-md rounded-lg max-w-max border border-gray-200 dark:border-gray-700">
+					<div className="mx-auto overflow-x-auto shadow-md rounded-lg border max-w-max border-gray-200 dark:border-gray-700">
 						<table className="text-sm text-left text-gray-500 dark:text-gray-400">
 							<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
 								<tr>
-									<th scope="col" className="py-3 pl-6">
+									<th scope="col" className="py-3 md:pl-6 text-center">
 										Date
 									</th>
-									<th scope="col" className="py-3 px-6">
+									<th scope="col" className="py-3 md:px-6 text-center">
 										Assignment
 									</th>
-									<th scope="col" className="py-3 px-6">
+									<th scope="col" className="py-3 md:px-6 pr-3 text-center">
 										Score
 									</th>
-									<th scope="col" className="py-3 px-6">
+									<th scope="col" className="py-3 md:px-6 pr-3">
 										Category
 									</th>
 								</tr>
@@ -474,16 +475,16 @@ export default function Grades({
 											} dark:border-gray-700`}
 											key={i}
 										>
-											<td className="py-4 pl-6">
+											<td className="py-4 md:pl-6 pl-2 text-center">
 												{date.due.toLocaleDateString()}
 											</td>
 											<td
-												className="py-4 px-6 hover:text-black dark:hover:text-white cursor-pointer"
+												className="py-4 md:px-6 px-3 text-center hover:text-black dark:hover:text-white cursor-pointer"
 												onClick={() => OpenModal(i)}
 											>
 												{name}
 											</td>
-											<td className="py-4 px-6">
+											<td className="py-4 md:px-6 pl-3 pr-2 text-center">
 												<div
 													className={`flex items-center gap-2 text-${grade.color}-400`}
 												>
@@ -502,13 +503,13 @@ export default function Grades({
 													/>
 												</div>
 											</td>
-											<td className="py-4 px-6">
+											<td className="py-4 md:px-6 pr-1 text-center">
 												<CategoryField
 													value={course?.categories.findIndex(
 														(c) => category === c.name
 													)}
 													onChange={(e) => updateCat(e.target.value, i)}
-													name={category}
+													name={abbreviate(category)}
 												>
 													{course?.categories.map((category, x) => (
 														<option value={x} key={x}>
