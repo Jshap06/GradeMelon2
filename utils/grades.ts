@@ -1,3 +1,4 @@
+import { sep } from "path";
 import { Gradebook } from "studentvue";
 
 interface Assignment {
@@ -554,6 +555,18 @@ const updateCourse = (
 	return course;
 };
 
+function abbreviate(category){
+	category=category.toUpperCase();
+	var seperator;
+	if(category.includes(" ")){seperator=" "}
+	else if(category.includes("/")){seperator="/"}
+	else{console.log("word");["A","E","I","O","U"].forEach((vowel)=>{category=category.replaceAll(vowel,"")});return category}
+	const words=category.split(seperator).filter((word)=>word!="/"&&word!=" ");
+	console.log(words)
+	console.log(category)
+	return(words[0].trim()[0]+words[1].trim()[0])
+}
+
 export {
 	parseGrades,
 	updateCourse,
@@ -563,5 +576,6 @@ export {
 	genTable,
 	calculateGPA,
 	updateGPA,
+	abbreviate
 };
 export type { Grades, Assignment, Course };
