@@ -30,6 +30,7 @@ interface GradesProps {
 	setGrades: React.Dispatch<React.SetStateAction<GradesType | undefined>>;
 	period: number;
 	setPeriod: (period: number) => void;
+	isMediumOrLarger:boolean;
 }
 
 interface OptimizeProps {
@@ -43,6 +44,7 @@ export default function Grades({
 	setToasts,
 	period,
 	setPeriod,
+	isMediumOrLarger
 }: GradesProps) {
 	const router = useRouter();
 	const { index }: { index?: string } = router.query;
@@ -450,13 +452,13 @@ export default function Grades({
 						<table className="text-sm text-left text-gray-500 dark:text-gray-400">
 							<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
 								<tr>
-									<th scope="col" className="py-3 md:pl-6 text-center">
+									<th scope="col" className="py-3 md:pl-6 text-center md:text-left">
 										Date
 									</th>
-									<th scope="col" className="py-3 md:px-6 text-center">
+									<th scope="col" className="py-3 md:px-6 text-center md:text-left">
 										Assignment
 									</th>
-									<th scope="col" className="py-3 md:px-6 pr-3 text-center">
+									<th scope="col" className="py-3 md:px-6 pr-3 text-center md:text-left">
 										Score
 									</th>
 									<th scope="col" className="py-3 md:px-6 pr-3">
@@ -475,16 +477,16 @@ export default function Grades({
 											} dark:border-gray-700`}
 											key={i}
 										>
-											<td className="py-4 md:pl-6 pl-2 text-center">
+											<td className="py-4 md:pl-6 pl-2 text-center md:text-left">
 												{date.due.toLocaleDateString()}
 											</td>
 											<td
-												className="py-4 md:px-6 px-3 text-center hover:text-black dark:hover:text-white cursor-pointer"
+												className="py-4 md:px-6 px-3 text-center md:text-left hover:text-black dark:hover:text-white cursor-pointer"
 												onClick={() => OpenModal(i)}
 											>
 												{name}
 											</td>
-											<td className="py-4 md:px-6 pl-3 pr-2 text-center">
+											<td className="py-4 md:px-6 pl-3 pr-2 text-center md:text-left">
 												<div
 													className={`flex items-center gap-2 text-${grade.color}-400`}
 												>
@@ -503,13 +505,13 @@ export default function Grades({
 													/>
 												</div>
 											</td>
-											<td className="py-4 md:px-6 pr-1 text-center">
+											<td className="py-4 md:px-6 pr-1 text-center md:text-left">
 												<CategoryField
 													value={course?.categories.findIndex(
 														(c) => category === c.name
 													)}
 													onChange={(e) => updateCat(e.target.value, i)}
-													name={abbreviate(category)}
+													name={isMediumOrLarger ? category : abbreviate(category)}
 												>
 													{course?.categories.map((category, x) => (
 														<option value={x} key={x}>

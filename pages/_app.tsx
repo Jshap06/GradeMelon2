@@ -205,6 +205,7 @@ const logout = async () => {
 								createError={createError}
 								districts={districts}
 								setDistricts={setDistricts}
+								isMediumOrLarger={isMediumOrLarger}
 							/>
 						</AnimateSharedLayout>
 					)}
@@ -229,6 +230,7 @@ const logout = async () => {
 										createError={createError}
 										districts={districts}
 										setDistricts={setDistricts}
+										isMediumOrLarger={isMediumOrLarger}
 									/>
 								</AnimateSharedLayout>
 							</div>
@@ -253,6 +255,7 @@ const logout = async () => {
 										createError={createError}
 										districts={districts}
 										setDistricts={setDistricts}
+										isMediumOrLarger={isMediumOrLarger}
 									/>
 								</AnimateSharedLayout>
 								<div className="px-4 fixed bottom-5 w-full">
