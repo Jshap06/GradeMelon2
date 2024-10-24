@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { Spinner, Modal } from "flowbite-react";
 import { useRouter } from "next/router";
 import {
@@ -55,7 +55,9 @@ export default function Grades({
 	const [modalType, setModalType] = useState("assignment");
 	const [optimizeProps, setOptimizeProps] = useState<OptimizeProps>({});
 	const [solutions, setSolution] = useState<[number[], number][]>([]);
-
+	const [isEditing, setIsEditing]=useState(false);
+	const [title,setTitle]=useState(undefined);
+	const assignmentTitle = useRef(null);
 	useEffect(() => {
 		try {
 			if (!grades&&client) {
@@ -84,6 +86,17 @@ export default function Grades({
 		);
 		setGrades({ ...temp });
 	};
+
+	const handleChange = (e) => setTitle(e.target.value);
+	
+	const handleTitleChange = () => {
+		console.log("the jonkler the did it");console.log(assignmentTitle.current.value=='');
+		const newTitle =assignmentTitle.current.value=='' ? "New Assignment" : assignmentTitle.current.value
+		let temp = grades;
+		temp.courses[parseInt(index as string)].assignments[modalDetails].name=newTitle;
+		setGrades(temp);
+		setIsEditing(false);
+	  };
 
 	const add = () => {
 		let temp = grades;
@@ -115,6 +128,7 @@ export default function Grades({
 	const OpenModal = (assignmnetId: number) => {
 		setModalType("assignment");
 		setModalDetails(assignmnetId);
+		setTitle(course?.assignments[assignmnetId]?.name)
 		setShowModal(true);
 	};
 
@@ -147,6 +161,10 @@ export default function Grades({
 			});
 	};
 
+	const editTitle=()=>{
+		setIsEditing(true);
+	}
+
 	const optimize = () => {
 		setModalType("optimize");
 		let tempProps = {};
@@ -163,6 +181,8 @@ export default function Grades({
 			return { ...prev, [field]: parseFloat(val) };
 		});
 	};
+	const handleFocus = () => {
+		if(title=="New Assignment"){setTitle("")}}
 
 	const optimizeGrades = () => {
 		let points = Object.values(optimizeProps);
@@ -179,9 +199,9 @@ export default function Grades({
 				</title>
 			</Head>
 			<Modal show={showModal} onClose={() => setShowModal(false)}>
-				<Modal.Header>
+				<Modal.Header className="text-xl font-medium text-gray-900 dark:text-white">
 					{modalType === "assignment"
-						? course?.assignments[modalDetails]?.name
+						? (isEditing ? (<input onFocus={handleFocus} className="border-none bg-transparent focus:outline-none focus:ring-0 p-0 text-xl font-medium" type="text" onChange={handleChange} ref={assignmentTitle} autoFocus onBlur={handleTitleChange} value={title}></input>) : (<p onClick={editTitle}>{title}</p>))
 						: "Optimize Grade"}
 				</Modal.Header>
 				<Modal.Body>
