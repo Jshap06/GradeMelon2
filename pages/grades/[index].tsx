@@ -201,7 +201,7 @@ export default function Grades({
 			<Modal show={showModal} onClose={() => setShowModal(false)}>
 				<Modal.Header className="text-xl font-medium text-gray-900 dark:text-white">
 					{modalType === "assignment"
-						? (isEditing ? (<input onFocus={handleFocus} className="border-none bg-transparent focus:outline-none focus:ring-0 p-0 text-xl font-medium" type="text" onChange={handleChange} ref={assignmentTitle} autoFocus onBlur={handleTitleChange} value={title}></input>) : (<p onClick={editTitle}>{title}</p>))
+						? (isEditing ? (<input onFocus={handleFocus} className="border-none bg-transparent focus:outline-none focus:ring-0 p-0 text-xl font-medium" type="text" onChange={handleChange} ref={assignmentTitle} autoFocus onBlur={handleTitleChange} value={title}></input>) : (<p onClick={course?.assignments[modalDetails].custom ? editTitle : ()=>{}}>{title}</p>))
 						: "Optimize Grade"}
 				</Modal.Header>
 				<Modal.Body>
