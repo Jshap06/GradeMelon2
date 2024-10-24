@@ -3,6 +3,7 @@ import { Gradebook } from "studentvue";
 
 interface Assignment {
 	name: string;
+	custom?:boolean;
 	grade: {
 		letter: string;
 		raw: number;
@@ -453,6 +454,7 @@ const calculateGrade = (course: Course): Course => {
 const addAssignment = (course: Course): Course => {
 	course.assignments.unshift({
 		name: "New Assignment",
+		custom:true,
 		grade: {
 			letter: "N/A",
 			raw: NaN,

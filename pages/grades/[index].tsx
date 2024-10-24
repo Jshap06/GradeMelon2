@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { Spinner, Modal } from "flowbite-react";
 import { useRouter } from "next/router";
 import {
@@ -55,6 +55,7 @@ export default function Grades({
 	const [modalType, setModalType] = useState("assignment");
 	const [optimizeProps, setOptimizeProps] = useState<OptimizeProps>({});
 	const [solutions, setSolution] = useState<[number[], number][]>([]);
+	const assignmentTitle = useRef(null);
 
 	useEffect(() => {
 		try {
@@ -84,6 +85,14 @@ export default function Grades({
 		);
 		setGrades({ ...temp });
 	};
+
+	const handleTitleChange = () => {
+		console.log("the jonkler the did it");console.log(assignmentTitle.current);
+		const newTitle = assignmentTitle.current.innerText;
+		let temp = grades;
+		temp.courses[parseInt(index as string)].assignments[modalDetails].name=newTitle;
+		setGrades(temp);
+	  };
 
 	const add = () => {
 		let temp = grades;
@@ -179,10 +188,10 @@ export default function Grades({
 				</title>
 			</Head>
 			<Modal show={showModal} onClose={() => setShowModal(false)}>
-				<Modal.Header>
-					{modalType === "assignment"
+				<Modal.Header className="text-xl font-medium text-gray-900 dark:text-white" contentEditable={course?.assignments[modalDetails].custom ? "true" : "false"} onBlur={(modalType=="assignment" && course?.assignments[modalDetails].custom)? handleTitleChange :()=>{}}>
+					<div ref={assignmentTitle}>{modalType === "assignment"
 						? course?.assignments[modalDetails]?.name
-						: "Optimize Grade"}
+						: "Optimize Grade"}</div>
 				</Modal.Header>
 				<Modal.Body>
 					{modalType === "assignment" && (
