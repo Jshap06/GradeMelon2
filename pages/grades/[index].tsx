@@ -90,7 +90,6 @@ export default function Grades({
 	const handleChange = (e) => setTitle(e.target.value);
 	
 	const handleTitleChange = () => {
-		console.log("the jonkler the did it");console.log(assignmentTitle.current.value=='');
 		const newTitle =assignmentTitle.current.value=='' ? "New Assignment" : assignmentTitle.current.value
 		let temp = grades;
 		temp.courses[parseInt(index as string)].assignments[modalDetails].name=newTitle;
